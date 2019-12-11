@@ -113,6 +113,7 @@ public class FBDataGen{
         }
         return res;
     }
+    
     /**
      * 用于打印double数组,方便调试
      * @param d 要打印的数组
