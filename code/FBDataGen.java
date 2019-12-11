@@ -10,19 +10,19 @@ public class FBDataGen{
     private final int len;
     private final double Omega;
     /**
-     * ÊµÀı»¯Ò»¸ö¹Ì¶¨³¤¶ÈµÄÊıÁĞÉú³ÉÆ÷
-     * @param len ³¤¶È
-     * @param Omega ½ÇÆµÂÊ
+     * å®ä¾‹åŒ–ä¸€ä¸ªå›ºå®šé•¿åº¦çš„æ•°åˆ—ç”Ÿæˆå™¨
+     * @param len é•¿åº¦
+     * @param Omega è§’é¢‘ç‡
      */
     FBDataGen(int len ,double Omega){
         this.len=len;
         this.Omega=Omega;
     } 
     /**
-     * Éú³ÉÒ»¸öÓàÏÒÕóÁĞ
-     * @param Omega ½ÇÆµÂÊ
-     * @param len ³¤¶È
-     * @return ÓàÏÒÕóÁĞ
+     * ç”Ÿæˆä¸€ä¸ªä½™å¼¦é˜µåˆ—
+     * @param Omega è§’é¢‘ç‡
+     * @param len é•¿åº¦
+     * @return ä½™å¼¦é˜µåˆ—
      */
     public static double[] getCosArray(double Omega,int len){
         double[] res=new double[len];
@@ -32,8 +32,8 @@ public class FBDataGen{
          return res;
     }
     /**
-     * Éú³ÉÒ»¸öÓàÏÒÕóÁĞ
-     * @return ÓàÏÒÕóÁĞ
+     * ç”Ÿæˆä¸€ä¸ªä½™å¼¦é˜µåˆ—
+     * @return ä½™å¼¦é˜µåˆ—
      */
     public double[] getCosArray(){
         double[] res =new double[this.len];
@@ -43,10 +43,10 @@ public class FBDataGen{
         return res;
     }
     /**
-     * Éú³ÉÒ»¸öÕıÏÒÕóÁĞ
-     * @param Omega ½ÇÆµÂÊ
-     * @param len ³¤¶È
-     * @return ÕıÏÒÕóÁĞ
+     * ç”Ÿæˆä¸€ä¸ªæ­£å¼¦é˜µåˆ—
+     * @param Omega è§’é¢‘ç‡
+     * @param len é•¿åº¦
+     * @return æ­£å¼¦é˜µåˆ—
      */
     public static double[] getSinArray(double Omega,int len){
         double[] res=new double[len];
@@ -56,8 +56,8 @@ public class FBDataGen{
          return res;
     }
     /**
-     * Éú³ÉÒ»¸öÕıÏÒÕóÁĞ
-     * @return ÕıÏÒÕóÁĞ
+     * ç”Ÿæˆä¸€ä¸ªæ­£å¼¦é˜µåˆ—
+     * @return æ­£å¼¦é˜µåˆ—
      */
     public double[] getSinArray(){
         double[] res =new double[this.len];
@@ -67,8 +67,8 @@ public class FBDataGen{
         return res;
     }
     /**
-     * ÓÃÓÚ´òÓ¡doubleÊı×é,·½±ãµ÷ÊÔ
-     * @param d Òª´òÓ¡µÄÊı×é
+     * ç”¨äºæ‰“å°doubleæ•°ç»„,æ–¹ä¾¿è°ƒè¯•
+     * @param d è¦æ‰“å°çš„æ•°ç»„
      */
     public static void prt(double[] d){
         for(int i=0;i<d.length;i++){

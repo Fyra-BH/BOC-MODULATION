@@ -4,8 +4,8 @@
  */
 package fbcode.math;
 /**
- * ¶¨ÒåÕâ¸öÀà½ö½öÊÇÎªÁË·½±ãµ¥¸ö¸´ÊıÔËËãµÄÇé¿ö
- * ±¾ÖÊÉÏºÍFBCoplexListÊÇÒ»¸ö¶«Î÷
+ * å®šä¹‰è¿™ä¸ªç±»ä»…ä»…æ˜¯ä¸ºäº†æ–¹ä¾¿å•ä¸ªå¤æ•°è¿ç®—çš„æƒ…å†µ
+ * æœ¬è´¨ä¸Šå’ŒFBCoplexListæ˜¯ä¸€ä¸ªä¸œè¥¿
  */
 public class FBComplex extends FBComplexList{
     public FBComplex(double re,double im){

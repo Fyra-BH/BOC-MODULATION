@@ -7,7 +7,7 @@ package fbcode.math;
 import fbcode.tools.FBConsole;
 import fbcode.math.FBDataGen;
 /**
- * ¸´ÊıÕóÁĞÒì³£
+ * å¤æ•°é˜µåˆ—å¼‚å¸¸
  */
 class FBComplexException extends Exception{
      public FBComplexException(String msg){
@@ -17,9 +17,9 @@ class FBComplexException extends Exception{
 
 public class FBComplexList{
     /**
-     * ¹¹ÔìÒ»¸ö¸´Êı£¬²ÎÊı¾ùÎªdouble
-     * @param re1 Êµ²¿
-     * @param im1 Ğé²¿
+     * æ„é€ ä¸€ä¸ªå¤æ•°ï¼Œå‚æ•°å‡ä¸ºdouble
+     * @param re1 å®éƒ¨
+     * @param im1 è™šéƒ¨
      */
     public FBComplexList(double re1,double im1){
         double[] re=new double[1];
@@ -31,14 +31,14 @@ public class FBComplexList{
         this.len=1;
     }
     /**
-     * ¹¹ÔìÒ»¸öÒ»Î¬¸´ÊıÕóÁĞ(1xN)£¬²ÎÊı¾ùÎªÊı×éĞÎÊ½
-     * @param re Êµ²¿
-     * @param im Ğé²¿
+     * æ„é€ ä¸€ä¸ªä¸€ç»´å¤æ•°é˜µåˆ—(1xN)ï¼Œå‚æ•°å‡ä¸ºæ•°ç»„å½¢å¼
+     * @param re å®éƒ¨
+     * @param im è™šéƒ¨
      */
     public FBComplexList(double[] re,double[] im){
         try{
             if(re.length!=im.length){
-                throw new FBComplexException("¸´ÊıÕóÁĞµÄĞé²¿ºÍÊµ²¿²»µÈ³¤");
+                throw new FBComplexException("å¤æ•°é˜µåˆ—çš„è™šéƒ¨å’Œå®éƒ¨ä¸ç­‰é•¿");
             }
         }catch(Exception e){
             System.out.println(e);
@@ -48,38 +48,38 @@ public class FBComplexList{
         this.len=re.length;
     }
     private int len;
-    private double[] re;//Êµ²¿
-    private double[] im;//Ğé²¿
+    private double[] re;//å®éƒ¨
+    private double[] im;//è™šéƒ¨
     /**
-     * Ğ´ÈëÊµ²¿
-     * @param f Êµ²¿
+     * å†™å…¥å®éƒ¨
+     * @param f å®éƒ¨
      */
     public void setRe(double[] f){
         re=f;
     }
     /**
-     * Ğ´ÈëĞé²¿
-     * @param f Ğé²¿
+     * å†™å…¥è™šéƒ¨
+     * @param f è™šéƒ¨
      */
     public void setIm(double[] f){
         im=f;
     }
     /**
-     * »ñÈ¡Êµ²¿
-     * @return Êµ²¿
+     * è·å–å®éƒ¨
+     * @return å®éƒ¨
      */
     public double[] getRe(){ 
         return re;
     }
     /**
-     * »ñÈ¡Ğé²¿
-     * @return Ğé²¿
+     * è·å–è™šéƒ¨
+     * @return è™šéƒ¨
      */
     public double[] getIm(){ 
         return im;
     }
     /**
-     * ´òÓ¡ÕóÁĞÖĞµÄÄÚÈİ
+     * æ‰“å°é˜µåˆ—ä¸­çš„å†…å®¹
      */
     public void prt(){
         for(int i=0;i<len;i++){
@@ -92,8 +92,8 @@ public class FBComplexList{
     }
     
     /**
-     * ´òÓ¡ÕóÁĞÖĞµÄÄÚÈİ¼°¸½¼ÓµÄ×Ö·û´®
-     * @param str ¸½¼ÓµÄ×Ö·û´®
+     * æ‰“å°é˜µåˆ—ä¸­çš„å†…å®¹åŠé™„åŠ çš„å­—ç¬¦ä¸²
+     * @param str é™„åŠ çš„å­—ç¬¦ä¸²
      */
     public void prt(String str){
         System.out.println(str+":");
@@ -107,13 +107,13 @@ public class FBComplexList{
     }
 
     /**
-     * ¸´Êı³Ë·¨,ÊäÈëÎªÁ½¸öFBComplexList¶ÔÏó
-     * ·µ»ØÁ½¸ö¸´ÊıÊıÁĞµÄ³Ë»ı
-     * @param cmp1 ³ËÊı1     
-     * @param cmp2 ³ËÊı2
-     * @return Ïà³ËµÄ½á¹û
+     * å¤æ•°ä¹˜æ³•,è¾“å…¥ä¸ºä¸¤ä¸ªFBComplexListå¯¹è±¡
+     * è¿”å›ä¸¤ä¸ªå¤æ•°æ•°åˆ—çš„ä¹˜ç§¯
+     * @param cmp1 ä¹˜æ•°1     
+     * @param cmp2 ä¹˜æ•°2
+     * @return ç›¸ä¹˜çš„ç»“æœ
      */
-    public static FBComplexList muti(FBComplexList cmp1,FBComplexList cmp2){//¸´ÊıÏà³Ë
+    public static FBComplexList muti(FBComplexList cmp1,FBComplexList cmp2){//å¤æ•°ç›¸ä¹˜
         int len=cmp1.im.length;
         double[] cmp1_re=cmp1.getRe();
         double[] cmp1_im=cmp1.getIm();  
@@ -123,7 +123,7 @@ public class FBComplexList{
         double res_re[]=new double[len];
         try {
             if(cmp1.len!=cmp2.len){
-                throw new FBComplexException("ÕóÁĞÎ¬¶È±ØĞëÏàµÈ");
+                throw new FBComplexException("é˜µåˆ—ç»´åº¦å¿…é¡»ç›¸ç­‰");
             }else{
                 for(int i=0;i<len;i++){
                 res_re[i]=cmp1_re[i]*cmp2_re[i]-cmp1_im[i]*cmp2_im[i];
@@ -137,18 +137,18 @@ public class FBComplexList{
         return null;
     }   
     /**
-     * Çó±¾¸´ÊıÕóÁĞÓëÁíÒ»¸ö¸´ÊıÕóÁĞÏà³Ë
-     * @param cmp Òª³ËÉËµÄÊı×é
-     * @return Ïà³ËµÄ½á¹û
+     * æ±‚æœ¬å¤æ•°é˜µåˆ—ä¸å¦ä¸€ä¸ªå¤æ•°é˜µåˆ—ç›¸ä¹˜
+     * @param cmp è¦ä¹˜ä¼¤çš„æ•°ç»„
+     * @return ç›¸ä¹˜çš„ç»“æœ
      */
-     public FBComplexList muti(FBComplexList cmp){//¸´ÊıÏà³Ë
+     public FBComplexList muti(FBComplexList cmp){//å¤æ•°ç›¸ä¹˜
         double[] cmp_re=cmp.getRe();
         double[] cmp_im=cmp.getIm();  
         double res_im[]=new double[len];
         double res_re[]=new double[len];
         try {
             if(cmp.len!=len){
-                throw new FBComplexException("ÕóÁĞÎ¬¶È±ØĞëÏàµÈ");
+                throw new FBComplexException("é˜µåˆ—ç»´åº¦å¿…é¡»ç›¸ç­‰");
             }else{
                 for(int i=0;i<len;i++) {
                 res_re[i]=cmp_re[i]*re[i]-cmp_im[i]*im[i];
@@ -163,10 +163,10 @@ public class FBComplexList{
     }
 
     /**
-     * ÇóÒ»¸ö¸´ÊıµÄµ¹Êı
-     * @param in ÊäÈëµÄ¸´ÊıÕóÁĞ
-     * @return ¶ÔÃ¿ÏîÇóµ¹ÊıµÄ½á¹û
-     * @throws Exception ËãÊıÒì³£
+     * æ±‚ä¸€ä¸ªå¤æ•°çš„å€’æ•°
+     * @param in è¾“å…¥çš„å¤æ•°é˜µåˆ—
+     * @return å¯¹æ¯é¡¹æ±‚å€’æ•°çš„ç»“æœ
+     * @throws Exception ç®—æ•°å¼‚å¸¸
      */
     public static FBComplexList getReciprocal(FBComplexList in) throws Exception{
         int len=in.len;
@@ -188,9 +188,9 @@ public class FBComplexList{
         return res;
     }
     /**
-     * Çóµ±Ç°¸´ÊıÕóÁĞµÄµ¹ÊıÕóÁĞ
-     * @return µ¹ÊıÕóÁĞ
-     * @throws Exception ËãÊıÒì³£
+     * æ±‚å½“å‰å¤æ•°é˜µåˆ—çš„å€’æ•°é˜µåˆ—
+     * @return å€’æ•°é˜µåˆ—
+     * @throws Exception ç®—æ•°å¼‚å¸¸
      */
     public FBComplexList getReciprocal() throws Exception{
         double[] res_im=new double[len];
@@ -211,10 +211,10 @@ public class FBComplexList{
     }
 
 /**
- * Çó¸´ÊıÕóÁĞµÄ³ı·¨,×ÔÉíÎª±»³ıÊıÊı×é
- * @param a ³ıÊıÊı×é
- * @return ³ı·¨µÄ½á¹û
- * @throws Exception ³ıÊı¿ÉÄÜÎªÁã
+ * æ±‚å¤æ•°é˜µåˆ—çš„é™¤æ³•,è‡ªèº«ä¸ºè¢«é™¤æ•°æ•°ç»„
+ * @param a é™¤æ•°æ•°ç»„
+ * @return é™¤æ³•çš„ç»“æœ
+ * @throws Exception é™¤æ•°å¯èƒ½ä¸ºé›¶
  */
     public FBComplexList dev(FBComplexList a)throws Exception{
         FBComplexList a1=null;
@@ -225,7 +225,7 @@ public class FBComplexList{
         }
         try {
             if(a.len!=len){
-                throw new FBComplexException("ÕóÁĞÎ¬¶È±ØĞëÏàµÈ");
+                throw new FBComplexException("é˜µåˆ—ç»´åº¦å¿…é¡»ç›¸ç­‰");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -233,12 +233,12 @@ public class FBComplexList{
         return this.muti(a1);    
     }
     /**
-     * Á½¸ö¸´ÊıÏà¼Ó(¾²Ì¬·½·¨£¬²úÉúĞÂ¶ÔÏó)
-     * @param cmp1 ¼ÓÊı1
-     * @param cmp2 ¼ÓÊı2
-     * @return Ïà¼ÓµÄ½á¹û
+     * ä¸¤ä¸ªå¤æ•°ç›¸åŠ (é™æ€æ–¹æ³•ï¼Œäº§ç”Ÿæ–°å¯¹è±¡)
+     * @param cmp1 åŠ æ•°1
+     * @param cmp2 åŠ æ•°2
+     * @return ç›¸åŠ çš„ç»“æœ
      */
-    public static FBComplexList add(FBComplexList cmp1,FBComplexList cmp2){//¸´ÊıÏà¼Ó
+    public static FBComplexList add(FBComplexList cmp1,FBComplexList cmp2){//å¤æ•°ç›¸åŠ 
         int len=cmp1.im.length;
         double[] cmp1_re=cmp1.getRe();
         double[] cmp1_im=cmp1.getIm();  
@@ -248,7 +248,7 @@ public class FBComplexList{
         double res_re[]=new double[len];
         try {
             if(cmp1.len!=cmp2.len){
-                throw new FBComplexException("ÕóÁĞÎ¬¶È±ØĞëÏàµÈ");
+                throw new FBComplexException("é˜µåˆ—ç»´åº¦å¿…é¡»ç›¸ç­‰");
             }else{
                 for(int i=0;i<len;i++){
                     res_re[i]=cmp1_re[i]+cmp2_re[i];
@@ -262,9 +262,9 @@ public class FBComplexList{
         return null;
     }
     /**
-     * ¸´ÊıÕóÁĞ¼Ó·¨
-     * @param cmp ¼ÓÊı
-     * @return Ïà¼ÓµÄ½á¹û
+     * å¤æ•°é˜µåˆ—åŠ æ³•
+     * @param cmp åŠ æ•°
+     * @return ç›¸åŠ çš„ç»“æœ
      */
     public FBComplexList add(FBComplexList cmp){
         double res_re[]=new double[len];
@@ -273,7 +273,7 @@ public class FBComplexList{
         double[] cmp_im=cmp.getIm();
         try {
             if(cmp.len!=this.len){
-                throw new FBComplexException("ÕóÁĞÎ¬¶È±ØĞëÏàµÈ");
+                throw new FBComplexException("é˜µåˆ—ç»´åº¦å¿…é¡»ç›¸ç­‰");
             }else{
                 for(int i=0;i<len;i++){
                     res_re[i]=cmp_re[i]+re[i];
@@ -286,8 +286,8 @@ public class FBComplexList{
         return new FBComplexList(res_re, res_im);
     }
 /*
- * ¶Ôµ±ÏÈ¸´ÊıÕóÁĞÇóÄ£
- * @return Ä£Öµ
+ * å¯¹å½“å…ˆå¤æ•°é˜µåˆ—æ±‚æ¨¡
+ * @return æ¨¡å€¼
  */
 public double[] module(){
     double[] res=new double[len];     
@@ -299,9 +299,9 @@ public double[] module(){
     return res;
 } 
 /**
- * ¶ÔÊäÈëµÄ¸´ÊıÕóÁĞÇóÄ£Öµ
- * @param c ÊäÈëµÄ¸´ÊıÕóÁĞ
- * @return Ä£Öµ
+ * å¯¹è¾“å…¥çš„å¤æ•°é˜µåˆ—æ±‚æ¨¡å€¼
+ * @param c è¾“å…¥çš„å¤æ•°é˜µåˆ—
+ * @return æ¨¡å€¼
  */
 public static double[] module(FBComplexList c){
     int len=c.len;
@@ -316,9 +316,9 @@ public static double[] module(FBComplexList c){
     return res;
 }
 /**
- * Çó¸´ÊıÕóÁĞµÄÏà½Ç
- * @param cmp ²ÎÓëÔËËãµÄ¸´ÊıÕóÁĞ
- * @return Ïà½Ç
+ * æ±‚å¤æ•°é˜µåˆ—çš„ç›¸è§’
+ * @param cmp å‚ä¸è¿ç®—çš„å¤æ•°é˜µåˆ—
+ * @return ç›¸è§’
  */
 public static double[] angle(FBComplexList cmp){
     double[] res=new double[cmp.len];
@@ -330,7 +330,7 @@ public static double[] angle(FBComplexList cmp){
         double b=cmp_im[i];
         if(b!=0){
             if(a==0){
-                res[i]=pi/2;//ĞéÖáÉÏ
+                res[i]=pi/2;//è™šè½´ä¸Š
             }else{
                 res[i]=Math.atan(b/a);
             }
@@ -341,8 +341,8 @@ public static double[] angle(FBComplexList cmp){
     return res;
 }
 /**
- * Çó¸´ÊıÕóÁĞµÄÏà½Ç
- * @return Ïà½Ç
+ * æ±‚å¤æ•°é˜µåˆ—çš„ç›¸è§’
+ * @return ç›¸è§’
  */
 public double[] angle(){
     double[] res=new double[len];
@@ -352,7 +352,7 @@ public double[] angle(){
         double b=im[i];
         if(b!=0){
             if(a==0){
-                res[i]=pi/2;//ĞéÖáÉÏ
+                res[i]=pi/2;//è™šè½´ä¸Š
             }else{
                 res[i]=Math.atan(b/a);
             }
@@ -363,9 +363,9 @@ public double[] angle(){
     return res;
 }
 /**
- * Í¨¹ıÅ·À­¹«Ê½¼ÆËã¸´ÊıÃİ
- * @param cmp ¸´Ö¸ÊıÕóÁĞ
- * @return Ãİ½á¹û
+ * é€šè¿‡æ¬§æ‹‰å…¬å¼è®¡ç®—å¤æ•°å¹‚
+ * @param cmp å¤æŒ‡æ•°é˜µåˆ—
+ * @return å¹‚ç»“æœ
  */
 public static FBComplexList exp(FBComplexList cmp){
     double[] res_re =new double[cmp.len];
