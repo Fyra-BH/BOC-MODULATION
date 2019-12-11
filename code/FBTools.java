@@ -29,6 +29,7 @@ package fbcode.tools;
                 index=i;
             }
         }
+
         double[] res={max,index};
         return res;
     }
