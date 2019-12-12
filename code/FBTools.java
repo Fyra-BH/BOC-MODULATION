@@ -33,4 +33,23 @@ package fbcode.tools;
         double[] res={max,index};
         return res;
     }
+    /**
+     * 重采样
+     * @param data  数据
+     * @param fs    新的采样率
+     * @param FS    旧的采样率
+     * @return      重采样后的结果
+     */
+    public static double[] resample(double[] data,int fs,int FS){
+        int len=data.length;
+        double[] res=new double[(int)len*FS/fs];
+        if(fs==FS){
+            return data;
+        }else if(fs<FS){
+            for(int i=0;i<(int)len*fs/FS;i++){
+                res[i]=data[(int)i*FS/fs];
+            }
+        }
+        return res;
+    }
  }
