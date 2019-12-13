@@ -34,6 +34,24 @@ package fbcode.tools;
         return res;
     }
     /**
+     * 返回序列中最小数值及其索引
+     * @param input 输入数组
+     * @return      长度为2的数组，第一个为数值，第二个为索引，需要转int
+     */
+    public static double [] min(double[] input){
+        double min=input[0];
+        double index=0;
+        for(int i=0;i<input.length;i++){
+            if(min>input[i]){
+                min=input[i];
+                index=i;
+            }
+        }
+
+        double[] res={min,index};
+        return res;
+    }
+    /**
      * 重采样
      * @param data  数据
      * @param fs    新的采样率
@@ -42,7 +60,7 @@ package fbcode.tools;
      */
     public static double[] resample(double[] data,int fs,int FS){
         int len=data.length;
-        double[] res=new double[(int)len*FS/fs];
+        double[] res=new double[(int)len*fs/FS];
         if(fs==FS){
             return data;
         }else if(fs<FS){
