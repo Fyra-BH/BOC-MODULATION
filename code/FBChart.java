@@ -12,6 +12,7 @@ import fbcode.math.FBDataGen;
 import fbcode.tools.FBConsole;
 import fbcode.tools.FBTools;
 
+
 import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.geom.*;
@@ -19,6 +20,7 @@ import java.awt.Graphics2D;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import javax.swing.JFrame;
+import java.awt.geom.Point2D;
 
  public class FBChart extends Canvas{
 
@@ -36,6 +38,11 @@ import javax.swing.JFrame;
 
     private final int MAX_WIDTH=1920;//最大支持的分辨率
     private final int MAX_HEIGHT=1080;//同上
+    
+    private final int MIN_WIDTH=240;//最小支持的分辨率
+    private final int MIN_HEIGHT=320;//同上
+
+    private Point2D orign=new Point2D.Double(0,0);
 
     /**
      * 构造函数
@@ -67,18 +74,42 @@ import javax.swing.JFrame;
          this.y_scale=this.y_range[1]-this.y_range[0];
         }
      }
+     /**
+      * 设置原点
+      * @param x 要设置的坐标
+      * @param y 要设置的坐标
+      */
+     public void setOrign(int x,int y){
+        if(x>this.getSize().width){
+           System.out.println("超出范围");
+        }else if(x<0){
+         this.orign.setLocation(0, y);
+        }else{
+         this.orign.setLocation(x, y);
+        }
+
+        if(y>this.getSize().height){
+         System.out.println("超出范围");
+         }else if(y<0){
+            this.orign.setLocation(this.orign.getX(),0);
+         }else{
+            this.orign.setLocation(this.orign.getX(),y);
+         }
+     }
 
      public void paint(Graphics e){
 
       Graphics2D g= (Graphics2D) e;
         /**绘制轮廓 */
-        
-      //  rec.
         BasicStroke bs=new BasicStroke(
-           16,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
+           2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
         );
+        Rectangle2D rect=new Rectangle2D.Double(0,0,50,50);
+        g.setStroke(bs);
+        //g.draw(rect);
         g.setColor(new Color(0x79,0x55,0x48));
-        g.drawRect(10, 10, this.x_zone, this.y_zone);
+        g.drawRect((int)this.orign.getX(), (int)this.orign.getY(), this.x_zone, this.y_zone);
+        //g.drawRect(0, 0, this.x_zone, this.y_zone);
      }
 
      public static void main(String[] args) {
@@ -90,6 +121,8 @@ import javax.swing.JFrame;
         double[] y=FBDataGen.getSinArray(x);
         double[] min=FBTools.min(y);
         FBChart ch=new FBChart(x, y);
+        ch.setLocation(10,10);
+        ch.setOrign(10, 10);
         ch.repaint();
         jf.add(ch); 
     }
