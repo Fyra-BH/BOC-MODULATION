@@ -113,7 +113,53 @@ public class FBDataGen{
         }
         return res;
     }
-    
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    public static double[] multi(double[] x,double y){
+        double[] res=new double[x.length];
+        for(int i=0;i<x.length;i++){
+            res[i]=x[i]*y;
+        }
+        return res;
+    }
+    public static double[] multi(double[] x,double[] y){
+        double[] res=new double[x.length];
+        for(int i=0;i<x.length;i++){
+            res[i]=x[i]*y[i];
+        }
+        return res;
+    }
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    public static double[] add(double[] x,double y){
+        double[] res=new double[x.length];
+        for(int i=0;i<x.length;i++){
+            res[i]=x[i]+y;
+        }
+        return res;
+    }
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    public static double[] add(double[] x,double[] y){
+        double[] res=new double[x.length];
+        for(int i=0;i<x.length;i++){
+            res[i]=x[i]+y[i];
+        }
+        return res;
+    }
+
     /**
      * 用于打印double数组,方便调试
      * @param d 要打印的数组

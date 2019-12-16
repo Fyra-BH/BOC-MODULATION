@@ -1,4 +1,5 @@
 package fbcode.tools;
+import fbcode.math.*;
 
 /**
  * @author     fyra
@@ -47,10 +48,27 @@ package fbcode.tools;
                 index=i;
             }
         }
-
         double[] res={min,index};
         return res;
     }
+        /**
+     * 返回序列中最小数值及其索引
+     * @param input 输入数组
+     * @return      长度为2的数组，第一个为数值，第二个为索引，需要转int
+     */
+    public static double [] min(int[] input){
+        double min=input[0];
+        double index=0;
+        for(int i=0;i<input.length;i++){
+            if(min>input[i]){
+                min=input[i];
+                index=i;
+            }
+        }
+        double[] res={min,index};
+        return res;
+    }
+
     /**
      * 重采样
      * @param data  数据
@@ -78,5 +96,12 @@ package fbcode.tools;
             
         }
         return res;
+    }
+
+    public static void main(String[] args) {
+        double[] x=FBDataGen.getLineSeq(0,3.14*2, 1000);
+        double[] y=FBDataGen.getSinArray(x);
+        y=FBTools.resample(y,320, y.length);
+        System.out.println("y_len="+y.length);
     }
  }
