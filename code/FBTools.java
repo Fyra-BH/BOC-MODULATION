@@ -67,6 +67,15 @@ package fbcode.tools;
             for(int i=0;i<(int)len*fs/FS;i++){
                 res[i]=data[(int)i*FS/fs];
             }
+        }else{
+            for(int i=0;i<(int)len*fs/FS;i++){
+                if((i+1)%(fs/FS)==0){
+                    res[i]=data[i*FS/fs];
+                }else{
+                    res[i]=0;
+                }
+            }
+            
         }
         return res;
     }
