@@ -22,6 +22,8 @@ import java.awt.Color;
 import javax.swing.JFrame;
 import java.awt.geom.Point2D;
 
+
+
  public class FBChart extends Canvas{
 
     private double[] x_resampled;//以1920×1080为基准的坐标，将作为基础数据进行放缩
@@ -36,11 +38,13 @@ import java.awt.geom.Point2D;
     private int x_zone;//实际显示时横向像素尺度
     private int y_zone;//实际显示时纵向像素尺度
 
-    private final int MAX_WIDTH=1920;//最大支持的分辨率
-    private final int MAX_HEIGHT=1080;//同上
+    public static final int MAX_WIDTH=1920;//最大支持的分辨率
+    public static final int MAX_HEIGHT=1080;//同上
     
-    private final int MIN_WIDTH=240;//最小支持的分辨率
-    private final int MIN_HEIGHT=320;//同上
+    public static final int MIN_WIDTH=320;//最小支持的分辨率
+    public static final int MIN_HEIGHT=240;//同上
+
+    public static final int BLANK_REMAINED=120;//边界留白
 
     private Point2D orign=new Point2D.Double(0,0);
 
@@ -58,8 +62,10 @@ import java.awt.geom.Point2D;
            System.out.println("长度不等！！");
         }else{
          
-         this.x_resampled=FBTools.resample(x,x.length/MAX_WIDTH,x.length);
-         this.y_resampled=FBTools.resample(y,y.length/MAX_WIDTH,y.length);
+         this.x_resampled=FBTools.resample(x,MAX_WIDTH,x.length);
+         this.y_resampled=FBTools.resample(y,MAX_WIDTH,y.length);
+
+         System.out.println("x_len="+x_resampled.length);
          
          /**确定定义域和值域 */
          this.x_range=new double[2];
@@ -96,9 +102,46 @@ import java.awt.geom.Point2D;
             this.orign.setLocation(this.orign.getX(),y);
          }
      }
+     /**
+      * 设置显示区域
+      * @param x  横向大小
+      * @param y  纵向大小
+      */
+     public void setZone(int x,int y){
+         if(x>MAX_WIDTH){
+            this.x_zone =MAX_WIDTH;
+         }else if(x<MIN_WIDTH){
+            this.x_zone=MIN_WIDTH;
+         }else{
+            this.x_zone=x;
+         }
 
+         if(y>MAX_HEIGHT){
+            this.y_zone=MAX_HEIGHT;
+         }else if(y<MIN_HEIGHT){
+            this.y_zone=MIN_HEIGHT;
+         }else{
+            this.y_zone=y;
+         }
+     }   
+     /**
+      * 返回矩形框的长
+      * @return 
+      */
+     public int getXzone(){
+        return x_zone;
+     }
+     /**
+      * 返回矩形框的高
+      * @return
+      */
+     public int getYzone(){
+        return y_zone;
+     }
+     /**
+      * 绘图方法
+      */
      public void paint(Graphics e){
-
       Graphics2D g= (Graphics2D) e;
         /**绘制轮廓 */
         BasicStroke bs=new BasicStroke(
@@ -106,24 +149,31 @@ import java.awt.geom.Point2D;
         );
         Rectangle2D rect=new Rectangle2D.Double(0,0,50,50);
         g.setStroke(bs);
-        //g.draw(rect);
         g.setColor(new Color(0x79,0x55,0x48));
-        g.drawRect((int)this.orign.getX(), (int)this.orign.getY(), this.x_zone, this.y_zone);
-        //g.drawRect(0, 0, this.x_zone, this.y_zone);
+        g.drawRect(BLANK_REMAINED/2, BLANK_REMAINED/4, this.x_zone, this.y_zone);
+
+        double[] dis_temp=FBTools.resample(y_resampled,this.x_zone,y_resampled.length);//这是用于显示的原始数据，后面将进行y轴放缩
+        /**下面将进行纵轴放缩 */
+        int[] dis=new int[dis_temp.length];
+        if(this.y_scale<this.y_zone*2/3){//小于显示高度的一半则放缩
+         for(int i=0;i<dis_temp.length;i++){
+             dis[i]=(int)(dis_temp[i]*this.y_zone/this.y_scale);
+         }
+        }
+
+         this.setOrign(BLANK_REMAINED/2, BLANK_REMAINED/4+(int)-FBTools.min(dis)[0]);//设置原点的像素坐标
+         System.out.println(orign.getX()+","+orign.getY());
+         g.drawLine((int)orign.getX(), (int)orign.getY(), this.x_zone+BLANK_REMAINED/2,(int)orign.getY() );
+
+         bs=new BasicStroke(
+           2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
+        );
+        g.setStroke(bs);
+        g.setColor(new Color(0xff,0x55,0x48));
+         for(int i=0;i<dis_temp.length-1;i++){
+            g.drawLine(i+(int)this.orign.getX(), dis[i]+(int)this.orign.getY(), i+(int)this.orign.getX()+1,  dis[i+1]+(int)this.orign.getY());
+         }
      }
 
-     public static void main(String[] args) {
-        JFrame jf=new JFrame("窗体");
-        jf.setSize(800,480);
-        jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jf.setVisible(true);
-        double[] x=FBDataGen.getLineSeq(0,3.14*2, 100000);
-        double[] y=FBDataGen.getSinArray(x);
-        double[] min=FBTools.min(y);
-        FBChart ch=new FBChart(x, y);
-        ch.setLocation(10,10);
-        ch.setOrign(10, 10);
-        ch.repaint();
-        jf.add(ch); 
-    }
+
  }
