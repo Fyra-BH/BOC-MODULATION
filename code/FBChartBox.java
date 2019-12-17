@@ -71,25 +71,36 @@ public class FBChartBox extends JFrame{
       //   box.setGridOn(true);
       //   box.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        int a = 10;
-        int b = 5;
+        int a = 5;
+        int b = 2;
         double fs=a*1.023e6;
         double fc=b*1.023e6;
 
          int n=(int)(2*fs/fc);
-         double[] f=FBDataGen.getLineSeq(0.0001, 2e7,10000);
+         double[] f=FBDataGen.getLineSeq(-1.5e7, 1.5e7,10);
          double[] GBOC=new double[f.length];
          if(n%2==0){//偶数
             double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
-
             double[] temp2=FBDataGen.getSinArray(FBDataGen.multi(f, Math.PI/fc)) ;   
             double[] temp=FBDataGen.multi(FBDataGen.multi(temp1, temp2), 1/Math.PI) ;
             temp =FBDataGen.div(temp, f);
             temp =FBDataGen.pow(temp, 2);
             temp =FBDataGen.multi(temp, fc);
             GBOC =FBDataGen.multi(temp,1e12);
+            //FBConsole.prt(GBOC);
             GBOC[0]=0;
             new FBChartBox(f, GBOC);
+         }else{//奇数
+            double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
+            double[] temp2=FBDataGen.getCosArray(FBDataGen.multi(f, Math.PI/fc)) ;   
+            double[] temp=FBDataGen.multi(FBDataGen.multi(temp1, temp2), 1/Math.PI) ;
+            temp =FBDataGen.div(temp, f);
+            temp =FBDataGen.pow(temp, 2);
+            temp =FBDataGen.multi(temp, fc);
+            GBOC =FBDataGen.multi(temp,1e12);
+           // GBOC[0]=0;
+            new FBChartBox(f, GBOC);
+
          }
          
     }

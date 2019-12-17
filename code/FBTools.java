@@ -116,10 +116,30 @@ import fbcode.math.*;
         return res;
     }
 
+    /**
+     * 数量级
+     * @param num 输入的数字
+     * @return 数量级
+     */
+    public static int getOrder(double num){
+        int n=0;
+        num=Math.abs(num);
+        if(num>1){
+            while(num>=10){
+                num/=10;
+                n++;
+            }
+        }else if(num<1){
+            while(num<0.1){
+                num*=10;
+                n--;
+            }
+        }
+        return n;
+    }
+
     public static void main(String[] args) {
-        double[] x=FBDataGen.getLineSeq(0,3.14*2, 1000);
-        double[] y=FBDataGen.getSinArray(x);
-        y=FBTools.resample(y,320, y.length);
-        System.out.println("y_len="+y.length);
+
+        System.out.println(FBTools.getOrder(0.9));
     }
  }

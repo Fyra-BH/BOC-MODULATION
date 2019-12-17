@@ -33,7 +33,7 @@ public class FBDataGen{
             double gap=(end-begin)/(len-1);
             double[] res=new double[len]; 
             for(int i=0;i<len;i++){
-                res[i]=begin=i*gap;
+                res[i]=begin+i*gap;
             }
             return res;
         }

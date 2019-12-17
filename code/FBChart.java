@@ -48,6 +48,8 @@ import java.awt.geom.Point2D;
 
     private boolean gridOn=true;//是否打开栅格
 
+    private boolean downSampling=true;//降采样标志
+    private double[] dataForUpsampling;//配合上面标志使用
     /**
      * 构造函数
      * @param y 图像纵轴数据
@@ -61,23 +63,28 @@ import java.awt.geom.Point2D;
         if(y.length!=x.length){
            System.out.println("长度不等！！");
         }else{
-         
-         this.x_resampled=FBTools.resample(x,MAX_WIDTH,x.length);
-         this.y_resampled=FBTools.resample(y,MAX_WIDTH,y.length);
+            this.x_resampled=FBTools.resample(x,MAX_WIDTH,x.length);
+            this.y_resampled=FBTools.resample(y,MAX_WIDTH,y.length);
 
-         System.out.println("x_len="+x_resampled.length);
-         
-         /**确定定义域和值域 */
-         this.x_range=new double[2];
-         this.y_range=new double[2];
-         this.x_range[0]=FBTools.min(this.x_resampled)[0];
-         this.x_range[1]=FBTools.max(this.x_resampled)[0];
-         this.y_range[0]=FBTools.min(this.y_resampled)[0];
-         this.y_range[1]=FBTools.max(this.y_resampled)[0];
+            System.out.println("x_len="+x_resampled.length);
+            
+            /**确定定义域和值域 */
+            this.x_range=new double[2];
+            this.y_range=new double[2];
+            this.x_range[0]=FBTools.min(this.x_resampled)[0];
+            this.x_range[1]=FBTools.max(this.x_resampled)[0];
+            this.y_range[0]=FBTools.min(this.y_resampled)[0];
+            this.y_range[1]=FBTools.max(this.y_resampled)[0];
 
-         /**确定横向和纵向尺度 */
-         this.x_scale=this.x_range[1]-this.x_range[0];
-         this.y_scale=this.y_range[1]-this.y_range[0];
+            /**确定横向和纵向尺度 */
+            this.x_scale=this.x_range[1]-this.x_range[0];
+            this.y_scale=this.y_range[1]-this.y_range[0];
+            if(x.length>x_zone){//降采样
+               downSampling=true;
+            }else{//升采样
+               dataForUpsampling=y;
+               downSampling=false;
+            }
         }
      }
      /**
@@ -138,8 +145,14 @@ import java.awt.geom.Point2D;
         g.setStroke(bs);
         g.setColor(new Color(0x79,0x55,0x48));
         g.drawRect(BLANK_REMAINED/2, BLANK_REMAINED/4, this.x_zone, this.y_zone);
+        double[] dis_temp;
+        if(downSampling){//当数据足够多时
+            dis_temp =FBTools.resample(y_resampled,this.x_zone,y_resampled.length);//这是用于显示的原始数据，后面将进行y轴放缩
+        }else{//数据较少时
+            dis_temp =FBTools.resample(dataForUpsampling,this.x_zone,dataForUpsampling.length);
+         //   FBConsole.prt(dis_temp);
+        }
 
-        double[] dis_temp=FBTools.resample(y_resampled,this.x_zone,y_resampled.length);//这是用于显示的原始数据，后面将进行y轴放缩
         /**下面将进行纵轴放缩及翻转 */
         int[] dis=new int[dis_temp.length];
         if(this.y_scale<this.y_zone*2/3){//小于显示高度的一半则放缩
@@ -150,6 +163,7 @@ import java.awt.geom.Point2D;
          for(int i=0;i<dis_temp.length;i++){
              dis[i]=(int)(dis_temp[i]*this.y_zone/this.y_scale);
         }
+
       }
          int y_center=(int)(FBTools.max(dis)[0]+FBTools.min(dis)[0])/2;//y轴中心
         // System.out.println("y_center="+y_center);
