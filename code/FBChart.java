@@ -46,7 +46,7 @@ import java.awt.geom.Point2D;
 
     public static final int BLANK_REMAINED=120;//边界留白
 
-    private boolean gridOn=false;//是否打开栅格
+    private boolean gridOn=true;//是否打开栅格
 
     /**
      * 构造函数
@@ -146,13 +146,17 @@ import java.awt.geom.Point2D;
          for(int i=0;i<dis_temp.length;i++){
              dis[i]=(int)(dis_temp[i]*this.y_zone/this.y_scale);
          }
+        }else if(this.y_scale>this.x_zone){//大于显示尺寸
+         for(int i=0;i<dis_temp.length;i++){
+             dis[i]=(int)(dis_temp[i]*this.y_zone/this.y_scale);
         }
+      }
          int y_center=(int)(FBTools.max(dis)[0]+FBTools.min(dis)[0])/2;//y轴中心
-         System.out.println("y_center="+y_center);
+        // System.out.println("y_center="+y_center);
 
          /**下面画曲线 */
          bs=new BasicStroke(
-           1,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
+           2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
         );
             g.setStroke(bs);
             g.setColor(new Color(0xc6,0x28,0x28));

@@ -113,6 +113,19 @@ public class FBDataGen{
         }
         return res;
     }
+
+    /**
+     * 由数组直接生成正切序列
+     * @param ph    相位数组
+     * @return      余弦序列
+     */
+    public static double[] getTanArray(double[] ph){   
+        double[] res =new double[ph.length];
+        for(int i=0;i<ph.length;i++){
+            res[i]=Math.tan(ph[i]);
+        }
+        return res;
+    }
     /**
      * 
      * @param x
@@ -126,10 +139,42 @@ public class FBDataGen{
         }
         return res;
     }
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
     public static double[] multi(double[] x,double[] y){
         double[] res=new double[x.length];
         for(int i=0;i<x.length;i++){
             res[i]=x[i]*y[i];
+        }
+        return res;
+    }
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    public static double[] div(double[] x,double[] y){
+        double[] res=new double[x.length];
+        for(int i=0;i<x.length;i++){
+            res[i]=x[i]/y[i];
+        }
+        return res;
+    }
+    /**
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    public static double[] div(double[] x,double y){
+        double[] res=new double[x.length];
+        for(int i=0;i<x.length;i++){
+            res[i]=x[i]/y;
         }
         return res;
     }
@@ -159,18 +204,18 @@ public class FBDataGen{
         }
         return res;
     }
-
     /**
-     * 用于打印double数组,方便调试
-     * @param d 要打印的数组
+     * 乘方
+     * @param x 底数
+     * @param y 指数
+     * @return
      */
-    public static void prt(double[] d){
-        for(int i=0;i<d.length;i++){
-            System.out.println("d["+i+"]="+d[i]);
-            }
-     }
-    // public static void main(String[] args) {
-    //     double[] d=FBDataGen.getCosArray(0.02*pi, 1000);
-    //     prt(d);
-    // }
+    public static double[] pow(double[] x,double y){
+        double[] res=new double[x.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i]=Math.pow(x[i], y);
+        }
+        return res;
+    }
+
 }
