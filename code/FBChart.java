@@ -48,6 +48,8 @@ import java.awt.geom.Point2D;
 
     private Point2D orign=new Point2D.Double(0,0);
 
+    private boolean gridOn=false;//是否打开栅格
+
     /**
      * 构造函数
      * @param y 图像纵轴数据
@@ -55,8 +57,8 @@ import java.awt.geom.Point2D;
      */
      public FBChart(double[] x,double[] y){
       /**默认的显示大小为480×320 */  
-      this.x_zone=480;
-      this.y_zone=320;
+      this.x_zone=800;
+      this.y_zone=480;
         setSize(this.x_zone,this.y_zone);
         if(y.length!=x.length){
            System.out.println("长度不等！！");
@@ -138,6 +140,15 @@ import java.awt.geom.Point2D;
      public int getYzone(){
         return y_zone;
      }
+
+     /**
+      * 是否打开栅格
+      * @param bool  是/否
+      */
+     public void setGridOn(boolean bool){
+      this.gridOn=bool;
+     }
+
      /**
       * 绘图方法
       */
@@ -153,25 +164,44 @@ import java.awt.geom.Point2D;
         g.drawRect(BLANK_REMAINED/2, BLANK_REMAINED/4, this.x_zone, this.y_zone);
 
         double[] dis_temp=FBTools.resample(y_resampled,this.x_zone,y_resampled.length);//这是用于显示的原始数据，后面将进行y轴放缩
-        /**下面将进行纵轴放缩 */
+        /**下面将进行纵轴放缩及翻转 */
         int[] dis=new int[dis_temp.length];
         if(this.y_scale<this.y_zone*2/3){//小于显示高度的一半则放缩
          for(int i=0;i<dis_temp.length;i++){
              dis[i]=(int)(dis_temp[i]*this.y_zone/this.y_scale);
          }
         }
-
-         this.setOrign(BLANK_REMAINED/2, BLANK_REMAINED/4+(int)-FBTools.min(dis)[0]);//设置原点的像素坐标
+        /**下面画出横轴 */
+         this.setOrign(BLANK_REMAINED/2, BLANK_REMAINED/4+this.y_zone+(int)FBTools.min(dis)[0]);//设置原点的像素坐标
          System.out.println(orign.getX()+","+orign.getY());
          g.drawLine((int)orign.getX(), (int)orign.getY(), this.x_zone+BLANK_REMAINED/2,(int)orign.getY() );
 
+         /**下面画曲线 */
          bs=new BasicStroke(
            2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
         );
-        g.setStroke(bs);
-        g.setColor(new Color(0xff,0x55,0x48));
-         for(int i=0;i<dis_temp.length-1;i++){
-            g.drawLine(i+(int)this.orign.getX(), dis[i]+(int)this.orign.getY(), i+(int)this.orign.getX()+1,  dis[i+1]+(int)this.orign.getY());
+            g.setStroke(bs);
+            g.setColor(new Color(0xc6,0x28,0x28));
+            for(int i=0;i<dis_temp.length-1;i++){
+               g.drawLine(i+(int)this.orign.getX(), -dis[i]+(int)this.orign.getY(), i+(int)this.orign.getX()+1,  -dis[i+1]+(int)this.orign.getY());
+            }
+         /**下面画栅格(条件gridOn) */
+         if(gridOn==true){
+            bs=new BasicStroke(
+               1,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL);
+               g.setStroke(bs);
+               g.setColor(new Color(0xad,0xad,0xad));
+               int N=y_zone/50;//栅格数
+               int y_start=BLANK_REMAINED/4;
+               int x_start=BLANK_REMAINED/2;
+               for (int i = 1; i < N; i++) {//以50左右宽度画x方向栅格
+                  g.drawLine(x_start, y_start+i*this.y_zone/N, x_start+x_zone, y_start+i*this.y_zone/N);
+               }
+               N=x_zone/50;
+               y_start=BLANK_REMAINED/4;
+                  for (int i = 0; i < N; i++) {//以50左右宽度画x方向栅格
+                     g.drawLine(x_start+i*this.x_zone/N, y_start, x_start+i*this.x_zone/N, y_start+y_zone);
+                  }
          }
      }
 
