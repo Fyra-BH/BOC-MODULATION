@@ -46,8 +46,6 @@ import java.awt.geom.Point2D;
 
     public static final int BLANK_REMAINED=120;//边界留白
 
-    private Point2D orign=new Point2D.Double(0,0);
-
     private boolean gridOn=false;//是否打开栅格
 
     /**
@@ -81,28 +79,6 @@ import java.awt.geom.Point2D;
          this.x_scale=this.x_range[1]-this.x_range[0];
          this.y_scale=this.y_range[1]-this.y_range[0];
         }
-     }
-     /**
-      * 设置原点
-      * @param x 要设置的坐标
-      * @param y 要设置的坐标
-      */
-     public void setOrign(int x,int y){
-        if(x>this.getSize().width){
-           System.out.println("超出范围");
-        }else if(x<0){
-         this.orign.setLocation(0, y);
-        }else{
-         this.orign.setLocation(x, y);
-        }
-
-        if(y>this.getSize().height){
-         System.out.println("超出范围");
-         }else if(y<0){
-            this.orign.setLocation(this.orign.getX(),0);
-         }else{
-            this.orign.setLocation(this.orign.getX(),y);
-         }
      }
      /**
       * 设置显示区域
@@ -171,26 +147,24 @@ import java.awt.geom.Point2D;
              dis[i]=(int)(dis_temp[i]*this.y_zone/this.y_scale);
          }
         }
-        /**下面画出横轴 */
-         this.setOrign(BLANK_REMAINED/2, BLANK_REMAINED/4+this.y_zone+(int)FBTools.min(dis)[0]);//设置原点的像素坐标
-         System.out.println(orign.getX()+","+orign.getY());
-         g.drawLine((int)orign.getX(), (int)orign.getY(), this.x_zone+BLANK_REMAINED/2,(int)orign.getY() );
+         int y_center=(int)(FBTools.max(dis)[0]+FBTools.min(dis)[0])/2;//y轴中心
+         System.out.println("y_center="+y_center);
 
          /**下面画曲线 */
          bs=new BasicStroke(
-           2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
+           1,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
         );
             g.setStroke(bs);
             g.setColor(new Color(0xc6,0x28,0x28));
             for(int i=0;i<dis_temp.length-1;i++){
-               g.drawLine(i+(int)this.orign.getX(), -dis[i]+(int)this.orign.getY(), i+(int)this.orign.getX()+1,  -dis[i+1]+(int)this.orign.getY());
+               g.drawLine(i+BLANK_REMAINED/2, y_center-dis[i]+BLANK_REMAINED/4+y_zone/2, i+BLANK_REMAINED/2+1, y_center-dis[i+1]+BLANK_REMAINED/4+y_zone/2);
             }
          /**下面画栅格(条件gridOn) */
          if(gridOn==true){
             bs=new BasicStroke(
                1,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL);
                g.setStroke(bs);
-               g.setColor(new Color(0xad,0xad,0xad));
+               g.setColor(new Color(0xbd,0xbd,0xcc));
                int N=y_zone/50;//栅格数
                int y_start=BLANK_REMAINED/4;
                int x_start=BLANK_REMAINED/2;
