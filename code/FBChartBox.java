@@ -77,7 +77,7 @@ public class FBChartBox extends JFrame{
         double fc=b*1.023e6;
 
          int n=(int)(2*fs/fc);
-         double[] f=FBDataGen.getLineSeq(-1.5e7, 1.5e7,10);
+         double[] f=FBDataGen.getLineSeq(-1.5e7, 1.5e7,1000);
          double[] GBOC=new double[f.length];
          if(n%2==0){//偶数
             double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
@@ -85,8 +85,7 @@ public class FBChartBox extends JFrame{
             double[] temp=FBDataGen.multi(FBDataGen.multi(temp1, temp2), 1/Math.PI) ;
             temp =FBDataGen.div(temp, f);
             temp =FBDataGen.pow(temp, 2);
-            temp =FBDataGen.multi(temp, fc);
-            GBOC =FBDataGen.multi(temp,1e12);
+            GBOC =FBDataGen.multi(temp, fc);
             //FBConsole.prt(GBOC);
             GBOC[0]=0;
             new FBChartBox(f, GBOC);
@@ -96,11 +95,10 @@ public class FBChartBox extends JFrame{
             double[] temp=FBDataGen.multi(FBDataGen.multi(temp1, temp2), 1/Math.PI) ;
             temp =FBDataGen.div(temp, f);
             temp =FBDataGen.pow(temp, 2);
-            temp =FBDataGen.multi(temp, fc);
-            GBOC =FBDataGen.multi(temp,1e12);
-           // GBOC[0]=0;
+            GBOC =FBDataGen.multi(temp, fc);
+            GBOC[0]=0;
+            //FBConsole.prt(GBOC);
             new FBChartBox(f, GBOC);
-
          }
          
     }

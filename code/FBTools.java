@@ -117,7 +117,7 @@ import fbcode.math.*;
     }
 
     /**
-     * 数量级
+     * 计算数量级
      * @param num 输入的数字
      * @return 数量级
      */
@@ -137,9 +137,17 @@ import fbcode.math.*;
         }
         return n;
     }
+    /**
+     * 计算底数
+     * @param num 输入的数据
+     * @return  底数
+     */
+    public static double getBase(double num){
+        return num/Math.pow(10, getOrder(num));
+    }
 
     public static void main(String[] args) {
 
-        System.out.println(FBTools.getOrder(0.9));
+        System.out.println(FBTools.getBase(16e10));
     }
  }

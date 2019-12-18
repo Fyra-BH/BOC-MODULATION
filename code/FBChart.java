@@ -45,6 +45,7 @@ import java.awt.geom.Point2D;
     public static final int MIN_HEIGHT=240;//同上
 
     public static final int BLANK_REMAINED=120;//边界留白
+    public static final int GRID_WIDTH=150;//栅格大小
 
     private boolean gridOn=true;//是否打开栅格
 
@@ -183,13 +184,13 @@ import java.awt.geom.Point2D;
                1,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL);
                g.setStroke(bs);
                g.setColor(new Color(0xbd,0xbd,0xcc));
-               int N=y_zone/50;//栅格数
+               int N=y_zone/GRID_WIDTH;//栅格数
                int y_start=BLANK_REMAINED/4;
                int x_start=BLANK_REMAINED/2;
                for (int i = 1; i < N; i++) {//以50左右宽度画x方向栅格
                   g.drawLine(x_start, y_start+i*this.y_zone/N, x_start+x_zone, y_start+i*this.y_zone/N);
                }
-               N=x_zone/50;
+               N=x_zone/GRID_WIDTH;
                y_start=BLANK_REMAINED/4;
                   for (int i = 0; i < N; i++) {//以50左右宽度画x方向栅格
                      g.drawLine(x_start+i*this.x_zone/N, y_start, x_start+i*this.x_zone/N, y_start+y_zone);
