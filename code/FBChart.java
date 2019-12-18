@@ -19,8 +19,11 @@ import java.awt.geom.*;
 import java.awt.Graphics2D;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+
 import javax.swing.JFrame;
 import java.awt.geom.Point2D;
+import java.text.DecimalFormat;
 
 
 
@@ -41,8 +44,8 @@ import java.awt.geom.Point2D;
     public static final int MAX_WIDTH=1920;//最大支持的分辨率
     public static final int MAX_HEIGHT=1080;//同上
     
-    public static final int MIN_WIDTH=320;//最小支持的分辨率
-    public static final int MIN_HEIGHT=240;//同上
+    public static final int MIN_WIDTH=480;//最小支持的分辨率
+    public static final int MIN_HEIGHT=320;//同上
 
     public static final int BLANK_REMAINED=120;//边界留白
     public static final int GRID_WIDTH=150;//栅格大小
@@ -66,8 +69,6 @@ import java.awt.geom.Point2D;
         }else{
             this.x_resampled=FBTools.resample(x,MAX_WIDTH,x.length);
             this.y_resampled=FBTools.resample(y,MAX_WIDTH,y.length);
-
-            System.out.println("x_len="+x_resampled.length);
             
             /**确定定义域和值域 */
             this.x_range=new double[2];
@@ -178,7 +179,7 @@ import java.awt.geom.Point2D;
             for(int i=0;i<dis_temp.length-1;i++){
                g.drawLine(i+BLANK_REMAINED/2, y_center-dis[i]+BLANK_REMAINED/4+y_zone/2, i+BLANK_REMAINED/2+1, y_center-dis[i+1]+BLANK_REMAINED/4+y_zone/2);
             }
-         /**下面画栅格(条件gridOn) */
+         /**下面画栅格(条件gridOn) ,并且显示刻度数据*/
          if(gridOn==true){
             bs=new BasicStroke(
                1,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL);
@@ -187,14 +188,30 @@ import java.awt.geom.Point2D;
                int N=y_zone/GRID_WIDTH;//栅格数
                int y_start=BLANK_REMAINED/4;
                int x_start=BLANK_REMAINED/2;
-               for (int i = 1; i < N; i++) {//以50左右宽度画x方向栅格
+               for (int i = 0; i <=N; i++) {//以50左右宽度画x方向栅格
                   g.drawLine(x_start, y_start+i*this.y_zone/N, x_start+x_zone, y_start+i*this.y_zone/N);
+
+                  /**下面显Y示刻度 */
+                  g.setColor(new Color(0x0,0x0,0x0));
+                  g.setFont(new Font("Dialog",Font.PLAIN,16));
+                  DecimalFormat df=new DecimalFormat("#.00");
+                  if(Math.abs(FBTools.getOrder(y_scale))>=0){//需要使用科学计数法
+                     g.drawString(df.format(FBTools.getBase(y_range[1]-y_scale*i/N)) +"e"+FBTools.getOrder(y_range[1]-y_scale*i/N), x_start+g.getFont().getSize()/2,y_start+i*this.y_zone/N-g.getFont().getSize()/2);
+                  }
                }
                N=x_zone/GRID_WIDTH;
                y_start=BLANK_REMAINED/4;
-                  for (int i = 0; i < N; i++) {//以50左右宽度画x方向栅格
-                     g.drawLine(x_start+i*this.x_zone/N, y_start, x_start+i*this.x_zone/N, y_start+y_zone);
+               for (int i = 0; i <N; i++) {//以50左右宽度画x方向栅格
+                  g.drawLine(x_start+i*this.x_zone/N, y_start, x_start+i*this.x_zone/N, y_start+y_zone);
+                    /**下面显X示刻度 */
+                  g.setColor(new Color(0x0,0x0,0x0));
+                  g.setFont(new Font("Dialog",Font.PLAIN,16));
+                  DecimalFormat df=new DecimalFormat("#.00");
+                  if(Math.abs(FBTools.getOrder(y_scale))>=0){//需要使用科学计数法
+                     g.drawString(df.format(FBTools.getBase(x_range[1]-x_scale*i/N)) +"e"+FBTools.getOrder(x_range[1]-x_scale*i/N), x_start+i*this.x_zone/N+g.getFont().getSize()/2,y_start+y_zone+g.getFont().getSize()*2);
                   }
+               }
+
          }
      }
 
