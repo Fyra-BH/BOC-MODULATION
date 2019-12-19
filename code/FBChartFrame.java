@@ -67,38 +67,6 @@ public class FBChartFrame extends JFrame{
      public void setGridOn(Boolean bool){
         this.chart.setGridOn(bool);
      }
-    public static void main(String[] args) {
-        int a = 5;
-        int b = 2;
-        double fs=a*1.023e6;
-        double fc=b*1.023e6;
-
-         int n=(int)(2*fs/fc);
-         double[] f=FBDataGen.getLineSeq(-1.5e7, 1.5e7,1000);
-         double[] GBOC=new double[f.length];
-         if(n%2==0){//偶数
-            double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
-            double[] temp2=FBDataGen.getSinArray(FBDataGen.multi(f, Math.PI/fc)) ;   
-            double[] temp=FBDataGen.multi(FBDataGen.multi(temp1, temp2), 1/Math.PI) ;
-            temp =FBDataGen.div(temp, f);
-            temp =FBDataGen.pow(temp, 2);
-            GBOC =FBDataGen.multi(temp, fc);
-            //FBConsole.prt(GBOC);
-            GBOC[0]=0;
-            new FBChartFrame(f, GBOC);
-         }else{//奇数
-            double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
-            double[] temp2=FBDataGen.getCosArray(FBDataGen.multi(f, Math.PI/fc)) ;   
-            double[] temp=FBDataGen.multi(FBDataGen.multi(temp1, temp2), 1/Math.PI) ;
-            temp =FBDataGen.div(temp, f);
-            temp =FBDataGen.pow(temp, 2);
-            GBOC =FBDataGen.multi(temp, fc);
-            GBOC[0]=0;
-            //FBConsole.prt(GBOC);
-            new FBChartFrame(f, GBOC);
-         }
-         
-    }
 }
 
 /**
