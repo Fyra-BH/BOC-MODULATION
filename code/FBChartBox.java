@@ -23,15 +23,23 @@ public class FBChartBox extends JFrame{
     private FBChart chart;
 
     public FBChartBox(double[] x,double[] y){
-        this.chart=new FBChart(x, y);
-        this.setSize(this.chart.getXzone()+FBChart.BLANK_REMAINED,this.chart.getYzone()+FBChart.BLANK_REMAINED);//加20是为了留白
-        this.add(this.chart);
-        new Thread(new FBRuleChecker(this)).start();
-
-        this.setTitle("title");
-        this.setVisible(true);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-    }
+      this.chart=new FBChart(x, y);
+      this.setSize(this.chart.getXzone()+FBChart.BLANK_REMAINED,this.chart.getYzone()+FBChart.BLANK_REMAINED);//加20是为了留白
+      this.add(this.chart);
+      new Thread(new FBRuleChecker(this)).start();
+      this.setTitle("chart");
+      setLocation(600,300);
+      this.setVisible(true);
+  }
+   public FBChartBox(double[] x,double[] y,String title){
+      this.chart=new FBChart(x, y);
+      this.setSize(this.chart.getXzone()+FBChart.BLANK_REMAINED,this.chart.getYzone()+FBChart.BLANK_REMAINED);//加20是为了留白
+      this.add(this.chart);
+      new Thread(new FBRuleChecker(this)).start();
+      this.setTitle(title);
+      setLocation(600,300);
+      this.setVisible(true);
+   }
 
           /**
       * 设置显示区域
@@ -60,17 +68,6 @@ public class FBChartBox extends JFrame{
         this.chart.setGridOn(bool);
      }
     public static void main(String[] args) {
-      //   double[] x=FBDataGen.getLineSeq(0,3.14*10, 10000);
-      //   double[] y=FBDataGen.getCosArray(x);
-      //   x=FBDataGen.getLineSeq(0,3.14*40, 10000);
-      //   double[] z=FBDataGen.getCosArray(x);
-      //   z=FBDataGen.multi(z, 0.8);
-      //   z=FBDataGen.add(y, z);
-      //   y=FBDataGen.add(y, -10);
-      //   FBChartBox box= new FBChartBox(x, y);
-      //   box.setGridOn(true);
-      //   box.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
         int a = 5;
         int b = 2;
         double fs=a*1.023e6;
@@ -112,10 +109,12 @@ public class FBChartBox extends JFrame{
     public FBRuleChecker (FBChartBox box){
        this.box=box;
     }
+    private int cnt=0;
     public void run(){
        while(true){
         try {         
             Thread.sleep(200);//200ms检测一次   
+            cnt++;
         } catch (Exception e) {
            e.printStackTrace();
         }
@@ -138,7 +137,6 @@ public class FBChartBox extends JFrame{
              box.setZone(box.getXzone(),box.getSize().height-FBChart.BLANK_REMAINED);
              box.repaint();
           }
-        
        }
     }
  

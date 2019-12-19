@@ -172,7 +172,7 @@ import java.text.DecimalFormat;
 
          /**下面画曲线 */
          bs=new BasicStroke(
-           2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
+           1,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
         );
             g.setStroke(bs);
             g.setColor(new Color(0xc6,0x28,0x28));
@@ -189,26 +189,28 @@ import java.text.DecimalFormat;
                int y_start=BLANK_REMAINED/4;
                int x_start=BLANK_REMAINED/2;
                for (int i = 0; i <=N; i++) {//以50左右宽度画x方向栅格
+                  g.setColor(new Color(0xbd,0xbd,0xcc));
                   g.drawLine(x_start, y_start+i*this.y_zone/N, x_start+x_zone, y_start+i*this.y_zone/N);
 
                   /**下面显Y示刻度 */
                   g.setColor(new Color(0x0,0x0,0x0));
                   g.setFont(new Font("Dialog",Font.PLAIN,16));
                   DecimalFormat df=new DecimalFormat("#.00");
-                  if(Math.abs(FBTools.getOrder(y_scale))>=0){//需要使用科学计数法
+                  if(Math.abs(FBTools.getOrder(y_scale))>=0){//需要使用科学计数法               
                      g.drawString(df.format(FBTools.getBase(y_range[1]-y_scale*i/N)) +"e"+FBTools.getOrder(y_range[1]-y_scale*i/N), x_start+g.getFont().getSize()/2,y_start+i*this.y_zone/N-g.getFont().getSize()/2);
                   }
                }
                N=x_zone/GRID_WIDTH;
                y_start=BLANK_REMAINED/4;
                for (int i = 0; i <N; i++) {//以50左右宽度画x方向栅格
+                  g.setColor(new Color(0xbd,0xbd,0xcc));
                   g.drawLine(x_start+i*this.x_zone/N, y_start, x_start+i*this.x_zone/N, y_start+y_zone);
                     /**下面显X示刻度 */
                   g.setColor(new Color(0x0,0x0,0x0));
                   g.setFont(new Font("Dialog",Font.PLAIN,16));
                   DecimalFormat df=new DecimalFormat("#.00");
                   if(Math.abs(FBTools.getOrder(y_scale))>=0){//需要使用科学计数法
-                     g.drawString(df.format(FBTools.getBase(x_range[1]-x_scale*i/N)) +"e"+FBTools.getOrder(x_range[1]-x_scale*i/N), x_start+i*this.x_zone/N+g.getFont().getSize()/2,y_start+y_zone+g.getFont().getSize()*2);
+                     g.drawString(df.format(FBTools.getBase(x_range[0]+x_scale*i/N)) +"e"+FBTools.getOrder(x_range[1]-x_scale*i/N), x_start+i*this.x_zone/N+g.getFont().getSize()/2,y_start+y_zone+g.getFont().getSize()*2);
                   }
                }
 

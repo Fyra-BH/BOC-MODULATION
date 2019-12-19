@@ -124,12 +124,18 @@ import fbcode.math.*;
     public static int getOrder(double num){
         int n=0;
         num=Math.abs(num);
+
+        if(num==0){
+            return 0;
+        }
+
         if(num>1){
             while(num>=10){
                 num/=10;
                 n++;
             }
         }else if(num<1){
+            n--;
             while(num<0.1){
                 num*=10;
                 n--;
@@ -148,6 +154,6 @@ import fbcode.math.*;
 
     public static void main(String[] args) {
 
-        System.out.println(FBTools.getBase(16e10));
+        System.out.println(FBTools.getOrder(1.3));
     }
  }
