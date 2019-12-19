@@ -19,10 +19,10 @@ import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
 
 
-public class FBChartBox extends JFrame{
+public class FBChartFrame extends JFrame{
     private FBChart chart;
 
-    public FBChartBox(double[] x,double[] y){
+    public FBChartFrame(double[] x,double[] y){
       this.chart=new FBChart(x, y);
       this.setSize(this.chart.getXzone()+FBChart.BLANK_REMAINED,this.chart.getYzone()+FBChart.BLANK_REMAINED);//加20是为了留白
       this.add(this.chart);
@@ -31,7 +31,7 @@ public class FBChartBox extends JFrame{
       setLocation(600,300);
       this.setVisible(true);
   }
-   public FBChartBox(double[] x,double[] y,String title){
+   public FBChartFrame(double[] x,double[] y,String title){
       this.chart=new FBChart(x, y);
       this.setSize(this.chart.getXzone()+FBChart.BLANK_REMAINED,this.chart.getYzone()+FBChart.BLANK_REMAINED);//加20是为了留白
       this.add(this.chart);
@@ -85,7 +85,7 @@ public class FBChartBox extends JFrame{
             GBOC =FBDataGen.multi(temp, fc);
             //FBConsole.prt(GBOC);
             GBOC[0]=0;
-            new FBChartBox(f, GBOC);
+            new FBChartFrame(f, GBOC);
          }else{//奇数
             double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
             double[] temp2=FBDataGen.getCosArray(FBDataGen.multi(f, Math.PI/fc)) ;   
@@ -95,7 +95,7 @@ public class FBChartBox extends JFrame{
             GBOC =FBDataGen.multi(temp, fc);
             GBOC[0]=0;
             //FBConsole.prt(GBOC);
-            new FBChartBox(f, GBOC);
+            new FBChartFrame(f, GBOC);
          }
          
     }
@@ -105,8 +105,8 @@ public class FBChartBox extends JFrame{
  * 用于检测规则的线程类
  */
  class FBRuleChecker implements Runnable{
-    private FBChartBox box;
-    public FBRuleChecker (FBChartBox box){
+    private FBChartFrame box;
+    public FBRuleChecker (FBChartFrame box){
        this.box=box;
     }
     private int cnt=0;

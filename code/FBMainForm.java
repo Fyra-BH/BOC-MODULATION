@@ -28,13 +28,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import fbcode.math.FBDataGen;
-import fbcode.gui.FBChartBox;
+import fbcode.gui.FBChartFrame;
 
 public class FBMainForm extends JFrame{
 
     public FBMainForm(){
         super("BOC 与 BPSK调制的分析");
-        setSize(480,320);
+        setSize(800,480);
+        setMinimumSize(new Dimension(480,320));
         setLocation(600,300);
         setVisible(true);
       //  setResizable(false);
@@ -63,6 +64,8 @@ class BocPanel extends JPanel{
     public BocPanel(){
 
         JPanel lfpanel=new JPanel();
+        JPanel rtpanel=new JPanel();
+
         JTextField tf_boc_alpha=new JTextField("10");
         JTextField tf_boc_beta=new JTextField("5");
         JTextField tf_boc_bw=new JTextField("30");
@@ -71,7 +74,6 @@ class BocPanel extends JPanel{
         JButton b2=new JButton("频域图像",new ImageIcon("icon/FREQ_ICON.png"));
         JButton b3=new JButton("计算参数");
 
-        JPanel rtpanel=new JPanel();
 
         lfpanel.setLayout(new BoxLayout(lfpanel,BoxLayout.Y_AXIS));
         lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
@@ -165,7 +167,7 @@ class BocPanel extends JPanel{
                         temp =FBDataGen.pow(temp, 2);
                         GBOC =FBDataGen.multi(temp, fc);
                         GBOC[0]=0;
-                        new FBChartBox(f, GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
+                        new FBChartFrame(f, GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
                      }else{//奇数
                         double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
                         double[] temp2=FBDataGen.getCosArray(FBDataGen.multi(f, Math.PI/fc)) ;   
@@ -174,7 +176,7 @@ class BocPanel extends JPanel{
                         temp =FBDataGen.pow(temp, 2);
                         GBOC =FBDataGen.multi(temp, fc);
                         GBOC[0]=0;
-                        new FBChartBox(f, GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
+                        new FBChartFrame(f, GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
                      } 
                 }
             }
@@ -184,13 +186,26 @@ class BocPanel extends JPanel{
     }
 }
 class BpskPanel extends JPanel{
+
     public BpskPanel(){
+
+        JPanel lfpanel=new JPanel();
+        JPanel rtpanel=new JPanel();
+
+        this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
+        add(lfpanel);
+        add(rtpanel);
+
         JButton b1=new JButton("时域图像");
         JButton b2=new JButton("频域图像");
         JButton b3=new JButton("计算参数");
-        add(b1);
-        add(b2);
-        add(b3);
+        lfpanel.setLayout(new BoxLayout(lfpanel,BoxLayout.Y_AXIS));
+        lfpanel.setBorder(BorderFactory.createBevelBorder(1));
+        
+        lfpanel.add(b1);
+        lfpanel.add(b2);
+        lfpanel.add(b3);
+        lfpanel.add(Box.createVerticalGlue());
     }
 }
 
