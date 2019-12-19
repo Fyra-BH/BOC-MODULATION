@@ -32,7 +32,7 @@ import java.awt.Graphics;
 
 import fbcode.math.FBDataGen;
 import fbcode.gui.FBChartFrame;
-import fbcode.gui.FBChartPanel;;
+import fbcode.gui.FBChartPanel;
 
 public class FBMainForm extends JFrame{
 
