@@ -22,39 +22,47 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JTextField;
+import javax.swing.JFileChooser;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.Graphics;
+
+import java.io.File;
+import java.io.FileFilter;
 
 import fbcode.math.FBDataGen;
 import fbcode.math.FBBocCal;
 import fbcode.gui.FBChartFrame;
 import fbcode.gui.FBChartPanel;
+import fbcode.tools.FBSnapShot;
 
 public class FBMainForm extends JFrame{
+
 
     public FBMainForm(){
         super("BOC 与 BPSK调制的分析");
         setSize(900,550);
         setMinimumSize(new Dimension(480,320));
         setLocation(600,300);
-        setVisible(true);
         setResizable(false);
         JTabbedPane jtp =new JTabbedPane();
         jtp.addTab("BOC", new ImageIcon("icon/BOC_ICON.png"),new BocPanel(),"BOC调制");
-        jtp.addTab("BPSK", new ImageIcon("icon/BPSK_ICON.png"), new BpskPanel(), "BPSK调制");
+        jtp.addTab("BPSK", new ImageIcon("icon/BPSK_ICON.png"),new BpskPanel(), "BPSK调制");
      
         getContentPane().add(jtp);
         validate();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+        setVisible(true);
     }
     public static void main(String[] args) {
-        new FBMainForm();
+        new FBMainForm(); 
     }
 }
 
@@ -82,11 +90,15 @@ class BocPanel extends JPanel{
     private int BOC_ALPHA=10;
     private int BOC_BETA=5;
     private double BOC_BW=3.0e6;//3M带宽
-    private boolean CHART_BOX_ENABLE=false;//弹窗式图像
+    private boolean CHART_FRAME_ENABLE=false;//弹窗式图像
+    private FBChartFrame chframe;
+    private JFileChooser fc=new JFileChooser("./snapshot/");//用于选择保存文件
+
+    public FBChartFrame getChartFrame(){
+        return chframe;
+    }
 
     public BocPanel(){
-        
-
         JPanel lfpanel=new JPanel();
         JPanel rtpanel=new  BackgroundPanel(new ImageIcon("icon/CHART.png").getImage());
        // rtpanel.add(new BackgroundPanel(new ImageIcon("icon/CHART.png").getImage()));
@@ -98,6 +110,7 @@ class BocPanel extends JPanel{
         JButton b1=new JButton("时域图像",new ImageIcon("icon/TIME_ICON.png"));
         JButton b2=new JButton("频域图像",new ImageIcon("icon/FREQ_ICON.png"));
         JButton b3=new JButton("计算参数",new ImageIcon("icon/cal.png"));
+        JButton b4=new JButton("保存截图",new ImageIcon("icon/SNAPSHOT.png"));
         JRadioButton rb1=new JRadioButton("弹出图像");
 
         lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
@@ -142,6 +155,8 @@ class BocPanel extends JPanel{
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
             lab_temp.add(b3); 
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            lab_temp.add(b4); 
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
         lfpanel.add(lab_temp);//一次性加入左边栏
         lfpanel.add(Box.createVerticalGlue()); 
         lfpanel.add(rb1);  
@@ -185,11 +200,54 @@ class BocPanel extends JPanel{
                             rtpanel.removeAll();
                             rtpanel.add(new FBChartPanel(f,GBOC,600,400));
                         }else{
-                            new FBChartFrame(f,GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
+                            chframe= new FBChartFrame(f,GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
                         }
                     }
             }
         });
+    
+        /**点击按键4截图*/
+        b4.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b4){  
+                    if(chframe==null){
+                        JOptionPane.showMessageDialog(null, "请先勾选弹出窗口按钮并点击频域图像按钮");
+                    }else{
+
+                        fc.setFileFilter(new javax.swing.filechooser.FileFilter(){
+                        
+                            @Override
+                            public String getDescription() {
+                                // TODO Auto-generated method stub
+                                return ".png";
+                            }
+                        
+                            @Override
+                            public boolean accept(File arg0) {
+                                // TODO Auto-generated method stub
+                                if(arg0.getName().endsWith("png"))
+                                    return true;
+                                else
+                                    return false;
+                            }
+                        });
+                        fc.showOpenDialog(fc);//浏览文件
+
+
+                        chframe.setAlwaysOnTop(true);
+                        chframe.setLocation(0,0);
+                        try {
+                            Thread.sleep(400);                            
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        new FBSnapShot(fc.getSelectedFile().toPath().toString(),"png").snapShot(chframe.getLocation().x+10,chframe.getLocation().y,chframe.getSize().width-20,chframe.getSize().height-10);
+                        chframe.setAlwaysOnTop(false);
+                    }
+                }
+            }
+        });
+
     }
 }
 

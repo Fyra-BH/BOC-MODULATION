@@ -28,7 +28,7 @@ public class FBChartFrame extends JFrame{
       this.add(this.chart);
       new Thread(new FBRuleChecker(this)).start();
       this.setTitle("chart");
-      setLocation(600,300);
+      setLocation(800,300);
       this.setVisible(true);
   }
    public FBChartFrame(double[] x,double[] y,String title){
@@ -37,7 +37,7 @@ public class FBChartFrame extends JFrame{
       this.add(this.chart);
       new Thread(new FBRuleChecker(this)).start();
       this.setTitle(title);
-      setLocation(600,300);
+      setLocation(800,300);
       this.setVisible(true);
    }
 
@@ -81,7 +81,7 @@ public class FBChartFrame extends JFrame{
     public void run(){
        while(true){
         try {         
-            Thread.sleep(200);//200ms检测一次   
+            Thread.sleep(200);//200ms检测一次  
             cnt++;
         } catch (Exception e) {
            e.printStackTrace();
