@@ -48,7 +48,7 @@ import java.text.DecimalFormat;
     public static final int MIN_HEIGHT=320;//同上
 
     public static final int BLANK_REMAINED=120;//边界留白
-    public static final int GRID_WIDTH=150;//栅格大小
+    public static final int GRID_WIDTH=100;//栅格大小
 
     private boolean gridOn=true;//是否打开栅格
 

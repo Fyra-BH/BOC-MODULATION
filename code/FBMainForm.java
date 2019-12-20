@@ -58,8 +58,7 @@ public class FBMainForm extends JFrame{
 }
 
 class BackgroundPanel extends JPanel {  
-           
-
+//摘自https://www.cnblogs.com/hthuang/archive/2013/12/04/3458351.html
     private static final long serialVersionUID = -6352788025440244338L;  
     
         private Image image = null;  
@@ -100,15 +99,11 @@ class BocPanel extends JPanel{
         JButton b3=new JButton("计算参数",new ImageIcon("icon/cal.png"));
         JRadioButton rb1=new JRadioButton("弹出图像");
 
-
-
-        lfpanel.setLayout(new BoxLayout(lfpanel,BoxLayout.Y_AXIS));
         lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
         rtpanel.setBorder(BorderFactory.createBevelBorder(1));
 
+        lfpanel.setLayout(new BoxLayout(lfpanel,BoxLayout.Y_AXIS));
         /**下面加入按键与参数框 */
-        lfpanel.add(Box.createVerticalGlue());   
-        lfpanel.add(Box.createRigidArea(new Dimension(20,20)));
         JPanel lab_temp= new JPanel();//临时面板，最终将加入lfpanel
         lab_temp.setLayout(new BoxLayout(lab_temp, BoxLayout.Y_AXIS));
         lab_temp.add(Box.createRigidArea(new Dimension(0,10)));
@@ -131,21 +126,22 @@ class BocPanel extends JPanel{
             lab_input.add(tf_boc_beta);
             lab_temp.add(lab_input);
 
-             lab_input= new JPanel();//输入面板
-             lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
-             lab_input.add(new JLabel("   bw="));
-             tf_boc_bw.setMaximumSize(new Dimension(60,40));
-             lab_input.add(tf_boc_bw);
-             lab_temp.add(lab_input);
-        lab_temp.setBorder(BorderFactory.createBevelBorder(1));
-        lfpanel.add(lab_temp);//一次性加入左边栏
+            lab_input= new JPanel();//输入面板
+            lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
+            lab_input.add(new JLabel("   bw="));
+            tf_boc_bw.setMaximumSize(new Dimension(60,40));
+            lab_input.add(tf_boc_bw);
+            lab_temp.add(lab_input);
+            lab_temp.setBorder(BorderFactory.createBevelBorder(1));
                 
-        lfpanel.add(Box.createRigidArea(new Dimension(10,40)));
-        lfpanel.add(b1);
-        lfpanel.add(Box.createRigidArea(new Dimension(10,10)));
-        lfpanel.add(b2);
-        lfpanel.add(Box.createRigidArea(new Dimension(10,10)));
-        lfpanel.add(b3); 
+            lab_temp.add(Box.createRigidArea(new Dimension(10,40)));
+            lab_temp.add(b1);
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            lab_temp.add(b2);
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            lab_temp.add(b3); 
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+        lfpanel.add(lab_temp);//一次性加入左边栏
         lfpanel.add(Box.createVerticalGlue()); 
         lfpanel.add(rb1);  
 
@@ -234,17 +230,21 @@ class BpskPanel extends JPanel{
     public BpskPanel(){
 
         JPanel lfpanel=new JPanel();
-        JPanel rtpanel=new JPanel();
+        JPanel rtpanel=new  BackgroundPanel(new ImageIcon("icon/CHART.png").getImage());
 
         this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
         add(lfpanel);
         add(rtpanel);
 
-        JButton b1=new JButton("时域图像");
-        JButton b2=new JButton("频域图像");
-        JButton b3=new JButton("计算参数");
+        JButton b1=new JButton("时域图像",new ImageIcon("icon/TIME_ICON.png"));
+        JButton b2=new JButton("频域图像",new ImageIcon("icon/FREQ_ICON.png"));
+        JButton b3=new JButton("计算参数",new ImageIcon("icon/cal.png"));
+
+        lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
+        rtpanel.setBorder(BorderFactory.createBevelBorder(1));
+
         lfpanel.setLayout(new BoxLayout(lfpanel,BoxLayout.Y_AXIS));
-        lfpanel.setBorder(BorderFactory.createBevelBorder(1));
+        /**下面加入按键与参数框 */
         
         lfpanel.add(b1);
         lfpanel.add(b2);
