@@ -36,6 +36,7 @@ import java.awt.Graphics;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.nio.file.DirectoryNotEmptyException;
 
 import fbcode.math.FBDataGen;
 import fbcode.math.FBBocCal;
@@ -92,7 +93,7 @@ class BocPanel extends JPanel{
     private double BOC_BW=3.0e6;//3M带宽
     private boolean CHART_FRAME_ENABLE=false;//弹窗式图像
     private FBChartFrame chframe;
-    private JFileChooser fc=new JFileChooser("./snapshot/");//用于选择保存文件
+    private JFileChooser fc;
 
     public FBChartFrame getChartFrame(){
         return chframe;
@@ -213,7 +214,8 @@ class BocPanel extends JPanel{
                     if(chframe==null){
                         JOptionPane.showMessageDialog(null, "请先勾选弹出窗口按钮并点击频域图像按钮");
                     }else{
-
+                        File mypath=new File("./snapshot");
+                        fc=new JFileChooser("./snapshot/");//用于选择保存文件
                         fc.setFileFilter(new javax.swing.filechooser.FileFilter(){
                         
                             @Override
@@ -231,17 +233,19 @@ class BocPanel extends JPanel{
                                     return false;
                             }
                         });
-                        fc.showOpenDialog(fc);//浏览文件
 
+                        mypath.mkdir();
+                        fc.showOpenDialog(fc);//浏览文件
 
                         chframe.setAlwaysOnTop(true);
                         chframe.setLocation(0,0);
                         try {
-                            Thread.sleep(400);                            
+                            Thread.sleep(500);                            
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        new FBSnapShot(fc.getSelectedFile().toPath().toString(),"png").snapShot(chframe.getLocation().x+10,chframe.getLocation().y,chframe.getSize().width-20,chframe.getSize().height-10);
+                       if(fc.getSelectedFile()!=null)//没选则不执行
+                         new FBSnapShot(fc.getSelectedFile().toPath().toString(),"png").snapShot(chframe.getLocation().x+10,chframe.getLocation().y,chframe.getSize().width-20,chframe.getSize().height-10);
                         chframe.setAlwaysOnTop(false);
                     }
                 }
