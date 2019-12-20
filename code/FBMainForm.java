@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.Graphics;
 
 import fbcode.math.FBDataGen;
+import fbcode.math.FBBocCal;
 import fbcode.gui.FBChartFrame;
 import fbcode.gui.FBChartPanel;
 
@@ -151,80 +152,47 @@ class BocPanel extends JPanel{
 
         /**点击按键2绘制功率普 */
         b2.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent arg0){
-                if(arg0.getSource()==b2){
-                /**首先获取BOC各项参数 */
-                try {
-                    if(Integer.valueOf( tf_boc_alpha.getText())==0){
-                        JOptionPane.showMessageDialog(null, "请输入正确参数");
-                        return;
-                    }else{
-                        BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
-                    }      
-                    if(Integer.valueOf( tf_boc_beta.getText())==0){
-                        JOptionPane.showMessageDialog(null, "请输入正确参数");
-                        return;
-                    }else{
-                        BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
-                    }  
-                    if(Double.valueOf(tf_boc_bw.getText())<=0){
-                        JOptionPane.showMessageDialog(null, "请输入正确参数");
-                        return;
-                    }else{
-                        BOC_BW=Double.valueOf(tf_boc_bw.getText())*1e6;
-                    } 
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "请输入正确参数");
-                    return;
-                }
+                public void actionPerformed(ActionEvent arg0){
+                    if(arg0.getSource()==b2){                        
+                    /**首先获取BOC各项参数 */
+                        try {
+                                if(Integer.valueOf( tf_boc_alpha.getText())==0){
+                                    JOptionPane.showMessageDialog(null, "请输入正确参数");
+                                    return;
+                                }else{
+                                    BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
+                                }      
+                                if(Integer.valueOf( tf_boc_beta.getText())==0){
+                                    JOptionPane.showMessageDialog(null, "请输入正确参数");
+                                    return;
+                                }else{
+                                    BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
+                                }  
+                                if(Double.valueOf(tf_boc_bw.getText())<=0){
+                                    JOptionPane.showMessageDialog(null, "请输入正确参数");
+                                    return;
+                                }else{
+                                    BOC_BW=Double.valueOf(tf_boc_bw.getText())*1e6;
+                                } 
+                            } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, "请输入正确参数");
+                            return;
+                        }
 
-                    int a = BOC_ALPHA;
-                    int b = BOC_BETA;
-                    System.out.println("BOC_ALPHA="+BOC_ALPHA);
-                    System.out.println("BOC_BETA="+BOC_BETA);
-                    double fs=a*1.023e6;
-                    double fc=b*1.023e6;
-            
-                     int n=(int)(2*fs/fc);
-                     double[] f=FBDataGen.getLineSeq(-BOC_BW/2, BOC_BW/2,10000);
-                     double[] GBOC=new double[f.length];
-                     if(n%2==0){//偶数
-                        double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
-                        double[] temp2=FBDataGen.getSinArray(FBDataGen.multi(f, Math.PI/fc)) ;   
-                        double[] temp=FBDataGen.multi(FBDataGen.multi(temp1, temp2), 1/Math.PI) ;
-                        temp =FBDataGen.div(temp, f);
-                        temp =FBDataGen.pow(temp, 2);
-                        GBOC =FBDataGen.multi(temp, fc);
-                        GBOC[0]=0;
-
+                        double[] GBOC=FBBocCal.getGBOC(BOC_ALPHA,BOC_BETA,BOC_BW);
+                        double[] f=FBDataGen.getLineSeq(-BOC_BW/2,BOC_BW/2,10000);//这个10000不能动！
                         if(rb1.isSelected()==false){
                             rtpanel.removeAll();
                             rtpanel.add(new FBChartPanel(f,GBOC,600,400));
                         }else{
-                            new FBChartFrame(f, GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
+                            new FBChartFrame(f,GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
                         }
-                     }else{//奇数
-                        double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
-                        double[] temp2=FBDataGen.getCosArray(FBDataGen.multi(f, Math.PI/fc)) ;   
-                        double[] temp=FBDataGen.multi(FBDataGen.multi(temp1, temp2), 1/Math.PI) ;
-                        temp =FBDataGen.div(temp, f);
-                        temp =FBDataGen.pow(temp, 2);
-                        GBOC =FBDataGen.multi(temp, fc);
-                        GBOC[0]=0;
-                        if(rb1.isSelected()==false){
-                            rtpanel.removeAll();
-                            rtpanel.add(new FBChartPanel(f,GBOC,600,400));
-                        }else{
-                            new FBChartFrame(f, GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
-                        }
-                     } 
-                }
+                    }
             }
         });
-
-        
     }
 }
+
 class BpskPanel extends JPanel{
 
     public BpskPanel(){
