@@ -201,6 +201,9 @@ class BocPanel extends JPanel{
                             rtpanel.removeAll();
                             rtpanel.add(new FBChartPanel(f,GBOC,600,400));
                         }else{
+                            if(chframe!=null){
+                                chframe.setVisible(false);
+                            }
                             chframe= new FBChartFrame(f,GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
                         }
                     }
