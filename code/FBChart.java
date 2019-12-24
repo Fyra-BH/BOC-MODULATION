@@ -51,6 +51,8 @@ import java.text.DecimalFormat;
     public static final int GRID_WIDTH=100;//栅格大小
 
     private boolean gridOn=true;//是否打开栅格
+    private boolean X_SCALE_ON=true;//x轴刻度
+    private boolean Y_SCALE_ON=true;//y轴刻度
 
     private boolean downSampling=true;//降采样标志
     private double[] dataForUpsampling;//配合上面标志使用
@@ -133,7 +135,21 @@ import java.text.DecimalFormat;
      public void setGridOn(boolean bool){
       this.gridOn=bool;
      }
-
+     
+     /**
+      * 是否打开X刻度
+      *@param bool  是/否
+      */
+     public void setXscaleOn(boolean b){
+      this.X_SCALE_ON=b;
+     }
+     /**
+      * 是否打开Y刻度
+      *@param bool  是/否
+      */
+      public void setYscaleOn(boolean b){
+         this.Y_SCALE_ON=b;
+        }
      /**
       * 绘图方法
       */
@@ -172,7 +188,7 @@ import java.text.DecimalFormat;
 
          /**下面画曲线 */
          bs=new BasicStroke(
-           1,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
+           2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
         );
             g.setStroke(bs);
             g.setColor(new Color(0xc6,0x28,0x28));
@@ -193,11 +209,13 @@ import java.text.DecimalFormat;
                   g.drawLine(x_start, y_start+i*this.y_zone/N, x_start+x_zone, y_start+i*this.y_zone/N);
 
                   /**下面显Y示刻度 */
-                  g.setColor(new Color(0x0,0x0,0x0));
-                  g.setFont(new Font("Dialog",Font.PLAIN,16));
-                  DecimalFormat df=new DecimalFormat("#.00");
-                  if(Math.abs(FBTools.getOrder(y_scale))>=0){//需要使用科学计数法               
-                     g.drawString(df.format(FBTools.getBase(y_range[1]-y_scale*i/N)) +"e"+FBTools.getOrder(y_range[1]-y_scale*i/N), x_start+g.getFont().getSize()/2,y_start+i*this.y_zone/N-g.getFont().getSize()/2);
+                  if(Y_SCALE_ON){
+                     g.setColor(new Color(0x0,0x0,0x0));
+                     g.setFont(new Font("Dialog",Font.PLAIN,16));
+                     DecimalFormat df=new DecimalFormat("#.00");
+                     if(Math.abs(FBTools.getOrder(y_scale))>=0){//需要使用科学计数法               
+                        g.drawString(df.format(FBTools.getBase(y_range[1]-y_scale*i/N)) +"e"+FBTools.getOrder(y_range[1]-y_scale*i/N), x_start+g.getFont().getSize()/2,y_start+i*this.y_zone/N-g.getFont().getSize()/2);
+                     }
                   }
                }
                N=x_zone/GRID_WIDTH;
@@ -206,12 +224,14 @@ import java.text.DecimalFormat;
                   g.setColor(new Color(0xbd,0xbd,0xcc));
                   g.drawLine(x_start+i*this.x_zone/N, y_start, x_start+i*this.x_zone/N, y_start+y_zone);
                     /**下面显X示刻度 */
-                  g.setColor(new Color(0x0,0x0,0x0));
-                  g.setFont(new Font("Dialog",Font.PLAIN,16));
-                  DecimalFormat df=new DecimalFormat("#.00");
-                  if(Math.abs(FBTools.getOrder(y_scale))>=0){//需要使用科学计数法
-                     g.drawString(df.format(FBTools.getBase(x_range[0]+x_scale*i/N)) +"e"+FBTools.getOrder(x_range[1]-x_scale*i/N), x_start+i*this.x_zone/N+g.getFont().getSize()/2,y_start+y_zone+g.getFont().getSize()*2);
-                  }
+                    if(X_SCALE_ON){
+                     g.setColor(new Color(0x0,0x0,0x0));
+                     g.setFont(new Font("Dialog",Font.PLAIN,16));
+                     DecimalFormat df=new DecimalFormat("#.00");
+                     if(Math.abs(FBTools.getOrder(y_scale))>=0){//需要使用科学计数法
+                        g.drawString(df.format(FBTools.getBase(x_range[0]+x_scale*i/N)) +"e"+FBTools.getOrder(x_range[1]-x_scale*i/N), x_start+i*this.x_zone/N+g.getFont().getSize()/2,y_start+y_zone+g.getFont().getSize()*2);
+                     }
+                    }
                }
 
          }
