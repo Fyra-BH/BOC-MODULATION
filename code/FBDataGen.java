@@ -217,5 +217,40 @@ public class FBDataGen{
         }
         return res;
     }
+    /**
+     * 定积分
+     * @param y
+     * @param x
+     * @return
+     */
+    public static double[] getInte(double[] y,double[] x){
+        double res[]=new double[y.length]; 
+        res[0]=y[0]*x[0];
+        for (int i = 1; i < y.length; i++) {
+            res[i]=res[i-1]+y[i]*(x[i]-x[i-1]);
+        }
+        return res;
+    }
+
+    public static double[] getMode(double[] in){
+        double[] res=new double[in.length];
+        for (int i = 0; i < in.length; i++) {
+            res[i]=Math.abs(in[i]);
+        }
+        return res;
+    }
+        /**
+     * 获取一定长度的随机0/1码
+     * @param len   长度
+     * @param P     1的概率
+     * @return
+     */
+    public static int[] getRandomCode(int len,double P){
+        int[] res=new int[len];
+        for (int i = 0; i < len; i++) {
+            res[i]=P>Math.random()? 1:0;
+        }
+        return res;
+    }
 
 }

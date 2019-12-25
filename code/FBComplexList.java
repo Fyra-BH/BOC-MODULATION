@@ -5,6 +5,7 @@
 package fbcode.math;
 
 import fbcode.tools.FBConsole;
+import fbcode.tools.FBTools;
 import fbcode.gui.FBChartFrame;
 import fbcode.math.FBDataGen;
 /**
@@ -454,6 +455,12 @@ public static FBComplexList exp(FBComplexList cmp){
     return new FBComplexList(res_re, res_im);
 }
     public static void main(String[] args){
-
+        double[] bw=FBDataGen.getLineSeq(0, 15e6, 10000);
+        double[] y= FBBocCal.getGBOC(8,4, bw);
+        double lambda=FBDataGen.getInte(y, bw)[10000-1];
+        y=FBDataGen.multi(y, 1/lambda);
+        y=FBDataGen.getInte(y, bw);
+        new FBChartFrame(bw, y);
+        System.out.println(10*Math.log10(y[y.length-1]/y[y.length*24/30]));
     }
 }

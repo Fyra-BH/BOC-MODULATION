@@ -7,7 +7,7 @@ package fbcode.math;
 import fbcode.tools.FBConsole;
 import fbcode.gui.FBChartFrame;
 import fbcode.math.FBDataGen;
-import fbcode.math.FBDsp;
+import fbcode.math.FBDataGen;;
 
 
 /**
@@ -20,34 +20,33 @@ public class FBBocCal{
     }
 
     /**
-     * 返回功率普
+     * 返回功率普(1000点)
      * @param a     BOC_ALPHA
      * @param b     BOC_BETA
      * @param bw    带宽
      * @return      功率普密度
      */
-    public static double[] getGBOC(int a,int b,Double bw){
+    public static double[] getGBOC(int a,int b,double[] bw){
 
         double fs=a*1.023e6;
         double fc=b*1.023e6;
 
          int n=(int)(2*fs/fc);
-         double[] f=FBDataGen.getLineSeq(-bw/2, bw/2,10000);
-         double[] GBOC=new double[f.length];
+         double[] GBOC=new double[bw.length];
          if(n%2==0){//偶数
-            double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
-            double[] temp2=FBDataGen.getSinArray(FBDataGen.multi(f, Math.PI/fc)) ;   
+            double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(bw, Math.PI/2/fs)) ;
+            double[] temp2=FBDataGen.getSinArray(FBDataGen.multi(bw, Math.PI/fc)) ;   
             double[] temp=FBDataGen.multi(FBDataGen.multi(temp1, temp2), 1/Math.PI) ;
-            temp =FBDataGen.div(temp, f);
+            temp =FBDataGen.div(temp, bw);
             temp =FBDataGen.pow(temp, 2);
             GBOC =FBDataGen.multi(temp, fc);
             GBOC[0]=0;
             return GBOC; 
          }else{//奇数
-            double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(f, Math.PI/2/fs)) ;
-            double[] temp2=FBDataGen.getCosArray(FBDataGen.multi(f, Math.PI/fc)) ;   
+            double[] temp1=FBDataGen.getTanArray(FBDataGen.multi(bw, Math.PI/2/fs)) ;
+            double[] temp2=FBDataGen.getCosArray(FBDataGen.multi(bw, Math.PI/fc)) ;   
             double[] temp=FBDataGen.multi(FBDataGen.multi(temp1, temp2), 1/Math.PI) ;
-            temp =FBDataGen.div(temp, f);
+            temp =FBDataGen.div(temp, bw);
             temp =FBDataGen.pow(temp, 2);
             GBOC =FBDataGen.multi(temp, fc);
             GBOC[0]=0;
@@ -67,7 +66,7 @@ public class FBBocCal{
         double[] res=new double[t.length];
         double ts=1/fs;//亚载波半周期
         double dur=t[t.length-1]-t[0];//时长
-        int[] an=FBDsp.getRandomCode((int)(dur/n/ts+1), 0.5);//获取随机扩频码
+        int[] an=FBDataGen.getRandomCode((int)(dur/n/ts+1), 0.5);//获取随机扩频码
         for (int i = 0; i < res.length; i++) {
             res[i]=an[(int)(i*an.length/res.length)];
         }

@@ -151,14 +151,37 @@ import fbcode.math.*;
     public static double getBase(double num){
         return num/Math.pow(10, getOrder(num));
     }
+    /**
+     * 计算分贝数
+     * @param x
+     * @return
+     */
+    public static double getdB(double x){
+        return 10*Math.log10(x);
+    }
+
+    /**
+     * 匹配
+     * @param in        输入数组
+     * @param target    匹配的对象
+     * @param delta     精度
+     * @return          匹配的索引
+     */
+    public static int match(double[] in,double target,double delta){
+        in=FBDataGen.add(in, -target);
+        in=FBDataGen.getMode(in);
+        double[] min=FBTools.min(in);
+        if(Math.abs(min[0]-target)<=delta){
+            return (int)min[1];
+        }else{
+            return -1;
+        }
+    }
 
     public static void main(String[] args) {
 
-        System.out.println(FBTools.getOrder(1.3));
-
-        for (int i = 0; i < 1000; i++) {
-            
-        }
+        System.out.println(FBTools.getOrder(1.31e7));
+        System.out.println(FBTools.getBase(1.31e7));
 
     }
  }

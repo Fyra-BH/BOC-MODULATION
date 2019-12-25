@@ -106,7 +106,8 @@ class BocPanel extends JPanel{
 
         JTextField tf_boc_alpha=new JTextField("10");
         JTextField tf_boc_beta=new JTextField("5");
-        JTextField tf_boc_bw=new JTextField("30");
+        JTextField tf_boc_bw_trans=new JTextField("30");
+        JTextField tf_boc_bw_recv=new JTextField("30");
 
         JButton b1=new JButton("时域图像",new ImageIcon("icon/TIME_ICON.png"));
         JButton b2=new JButton("频域图像",new ImageIcon("icon/FREQ_ICON.png"));
@@ -124,7 +125,8 @@ class BocPanel extends JPanel{
         lab_temp.add(Box.createRigidArea(new Dimension(0,10)));
         lab_temp.add(new JLabel("请设置参数:"));
         lab_temp.add(new JLabel("BOC(α,β)"));
-        lab_temp.add(new JLabel("带宽bw(MHz)"));
+        lab_temp.add(new JLabel("发射带宽βt(MHz)"));
+        lab_temp.add(new JLabel("接收带宽βr(MHz)"));
         lab_temp.add(Box.createRigidArea(new Dimension(0,10)));
             /**加入输入参数的面板 */        
             JPanel lab_input= new JPanel();//输入面板
@@ -143,12 +145,19 @@ class BocPanel extends JPanel{
 
             lab_input= new JPanel();//输入面板
             lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
-            lab_input.add(new JLabel("   bw="));
-            tf_boc_bw.setMaximumSize(new Dimension(60,40));
-            lab_input.add(tf_boc_bw);
+            lab_input.add(new JLabel("   βt=  "));
+            tf_boc_bw_trans.setMaximumSize(new Dimension(60,40));
+            lab_input.add(tf_boc_bw_trans);
             lab_temp.add(lab_input);
+
+            lab_input= new JPanel();//输入面板
+            lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
+            lab_input.add(new JLabel("   βr=  "));
+            tf_boc_bw_recv.setMaximumSize(new Dimension(60,40));
+            lab_input.add(tf_boc_bw_recv);
+            lab_temp.add(lab_input);
+
             lab_temp.setBorder(BorderFactory.createBevelBorder(1));
-                
             lab_temp.add(Box.createRigidArea(new Dimension(10,40)));
             lab_temp.add(b1);
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
@@ -174,7 +183,7 @@ class BocPanel extends JPanel{
                     try {
                         BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
                         BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
-                        BOC_BW=Double.valueOf(tf_boc_bw.getText())*1e6;
+                        BOC_BW=Double.valueOf(tf_boc_bw_trans.getText())*1e6;
                         if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BW>0){
                             /**do nothing */
                         }else{
@@ -213,7 +222,7 @@ class BocPanel extends JPanel{
                         try {
                                 BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
                                 BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
-                                BOC_BW=Double.valueOf(tf_boc_bw.getText())*1e6;
+                                BOC_BW=Double.valueOf(tf_boc_bw_trans.getText())*1e6;
                                 if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BW>0){
                                     /**do nothing */
                                 }else{
@@ -225,19 +234,19 @@ class BocPanel extends JPanel{
                             return;
                         }
 
-                        double[] GBOC=FBBocCal.getGBOC(BOC_ALPHA,BOC_BETA,BOC_BW);
-                        double[] f=FBDataGen.getLineSeq(-BOC_BW/2,BOC_BW/2,10000);//这个10000不能动！
+                        double[] bw=FBDataGen.getLineSeq(-BOC_BW/2,BOC_BW/2,10000);//这个10000不能动！
+                        double[] GBOC=FBBocCal.getGBOC(BOC_ALPHA,BOC_BETA,bw);
                         
                         if(rb1.isSelected()==false){
                             rtpanel.removeAll();   
-                            FBChartPanel cp= new FBChartPanel(f,GBOC,600,400);
+                            FBChartPanel cp= new FBChartPanel(bw,GBOC,600,400);
                             rtpanel.add(cp);
                         }else{
                             if(chframe!=null){
                                 chframe.setVisible(false);
                                 chframe.setEnabled(false);
                             }
-                            chframe= new FBChartFrame(f,GBOC,"归一化"+"BOC("+BOC_ALPHA+","+BOC_BETA+")");
+                            chframe= new FBChartFrame(bw,GBOC,"归一化"+"BOC("+BOC_ALPHA+","+BOC_BETA+")");
                         }
                     }
             }
