@@ -417,7 +417,7 @@ public static FBComplexList getInte(FBComplexList y,double[] x){
  * 带限带宽内逆傅里叶变换
  * @param s     频域数据
  * @param f     附加频率
- * @param t    `时域范围 
+ * @param t     时域范围 
  * @return      逆变换结果
  */
 public static FBComplexList getIDTFT(FBComplexList s,double[] f,double[] t){
@@ -458,14 +458,11 @@ public static FBComplexList exp(FBComplexList cmp){
         double[] y= FBBocCal.getGBOC(10,5, bw);
         double lambda=FBDataGen.getInte(y, bw)[100-1];
         //new FBChartFrame(bw, y);
-        y=FBDataGen.multi(y, 1/lambda);
-        y=FBDataGen.getInte(y, bw);
+        //y=FBDataGen.multi(y, 1/lambda);
         double[] t=FBDataGen.getLineSeq(-0.2e-6, 0.2e-6, 2000);
         FBComplexList B=FBComplexList.getIDTFT(new FBComplexList(y, 0), bw, t);
         FBChartFrame ch;
         ch= new FBChartFrame(t, B.module());
-        ch.setLineWidth(4);
-  
-       
+        ch.setLineWidth(3);       
     }
 }

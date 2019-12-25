@@ -111,8 +111,9 @@ class BocPanel extends JPanel{
 
         JButton b1=new JButton("时域图像",new ImageIcon("icon/TIME_ICON.png"));
         JButton b2=new JButton("频域图像",new ImageIcon("icon/FREQ_ICON.png"));
-        JButton b3=new JButton("计算参数",new ImageIcon("icon/cal.png"));
-        JButton b4=new JButton("保存截图",new ImageIcon("icon/SNAPSHOT.png"));
+        JButton b3=new JButton("相关函数",new ImageIcon("icon/R.png"));
+        JButton b4=new JButton("计算参数",new ImageIcon("icon/cal.png"));
+        JButton b5=new JButton("保存截图",new ImageIcon("icon/SNAPSHOT.png"));
         JRadioButton rb1=new JRadioButton("弹出图像");
 
         lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
@@ -163,9 +164,11 @@ class BocPanel extends JPanel{
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
             lab_temp.add(b2);
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
-            lab_temp.add(b3); 
+            lab_temp.add(b3);
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
             lab_temp.add(b4); 
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            lab_temp.add(b5); 
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
         lfpanel.add(lab_temp);//一次性加入左边栏
         lfpanel.add(Box.createVerticalGlue()); 
@@ -243,19 +246,56 @@ class BocPanel extends JPanel{
                             rtpanel.add(cp);
                         }else{
                             if(chframe!=null){
-                                chframe.setVisible(false);
-                                chframe.setEnabled(false);
+                              //  chframe.setVisible(false);
                             }
                             chframe= new FBChartFrame(bw,GBOC,"归一化"+"BOC("+BOC_ALPHA+","+BOC_BETA+")");
                         }
                     }
             }
         });
-    
-        /**点击按键4截图*/
-        b4.addActionListener(new ActionListener(){
+
+        b3.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent arg0){
-                if(arg0.getSource()==b4){  
+                if(arg0.getSource()==b3){
+                    /**首先获取BOC各项参数 */
+                    try {
+                        BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
+                        BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
+                        BOC_BW=Double.valueOf(tf_boc_bw_trans.getText())*1e6;
+                        if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BW>0){
+                            /**do nothing */
+                        }else{
+                            JOptionPane.showMessageDialog(null, "请输入正确参数");
+                            return;
+                        }
+                    } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "请输入正确参数");
+                    return;
+                    }
+                    
+
+                    double[] bw=FBDataGen.getLineSeq(-BOC_BW/2,BOC_BW/2,1000);//这个10000不能动！
+                    double[] GBOC=FBBocCal.getGBOC(BOC_ALPHA,BOC_BETA,bw);
+                    double[] tau=FBDataGen.getLineSeq(-1e-6,1e-6,2000);
+                    double[] Rt=FBBocCal.getRt(GBOC, bw,tau);
+                    if(rb1.isSelected()==false){
+                        rtpanel.removeAll();   
+                        FBChartPanel cp= new FBChartPanel(tau,Rt,600,400);
+                        rtpanel.add(cp);
+                    }else{
+                        if(chframe!=null){
+                          //  chframe.setVisible(false);
+                        }
+                        chframe= new FBChartFrame(tau,Rt,"自相关函数"+"BOC("+BOC_ALPHA+","+BOC_BETA+")");
+                    }                    
+                }
+            }
+        });
+    
+        /**点击按键5截图*/
+        b5.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b5){  
                     if(chframe==null){
                         JOptionPane.showMessageDialog(null, "请先勾选弹出窗口按钮并点击频域图像按钮");
                     }else{
@@ -314,7 +354,7 @@ class BpskPanel extends JPanel{
 
         JButton b1=new JButton("时域图像",new ImageIcon("icon/TIME_ICON.png"));
         JButton b2=new JButton("频域图像",new ImageIcon("icon/FREQ_ICON.png"));
-        JButton b3=new JButton("计算参数",new ImageIcon("icon/cal.png"));
+        JButton b4=new JButton("计算参数",new ImageIcon("icon/cal.png"));
 
         lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
         rtpanel.setBorder(BorderFactory.createBevelBorder(1));
@@ -324,7 +364,7 @@ class BpskPanel extends JPanel{
         
         lfpanel.add(b1);
         lfpanel.add(b2);
-        lfpanel.add(b3);
+        lfpanel.add(b4);
         lfpanel.add(Box.createVerticalGlue());
     }
 }

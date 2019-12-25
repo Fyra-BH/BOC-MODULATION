@@ -6,6 +6,7 @@ package fbcode.math;
 
 import fbcode.tools.FBConsole;
 import fbcode.gui.FBChartFrame;
+import fbcode.math.FBComplexList;
 import fbcode.math.FBDataGen;
 import fbcode.math.FBDataGen;;
 
@@ -97,6 +98,17 @@ public class FBBocCal{
         return getBBS((int)alpha*2/beta , (double)alpha*1.023e6,  t);
     }
 
+    /**
+     * 计算自相关函数
+     * @param Gf    频谱
+     * @param f     带宽
+     * @param tau   即τ
+     * @return      自相关函数
+     */
+    public static double[] getRt(double[] Gf,double[] f,double[] tau){
+        FBComplexList B=FBComplexList.getIDTFT(new FBComplexList(Gf, 0), f, tau);
+        return B.module();
+    }
 
     public static void main(String[] args) {
         double[] s= FBBocCal.getBBS(10, 5, 20);
