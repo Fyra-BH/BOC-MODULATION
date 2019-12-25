@@ -22,20 +22,7 @@ public class FBComplexList{
     private int len;
     private double[] re;//实部
     private double[] im;//虚部
-    /**
-     * 构造一个复数，参数均为double
-     * @param re1 实部
-     * @param im1 虚部
-     */
-    public FBComplexList(double re1,double im1){
-        double[] re=new double[1];
-        double[] im=new double[1];
-        re[0]=re1;
-        im[0]=im1;  
-        this.re=re;
-        this.im=im;    
-        this.len=1;
-    }
+
     /**
      * 构造一个一维复数阵列(1xN)，参数均为数组形式
      * @param re 实部
@@ -137,7 +124,7 @@ public class FBComplexList{
      * @param cmp2 乘数2
      * @return 相乘的结果
      */
-    public static FBComplexList muti(FBComplexList cmp1,FBComplexList cmp2){//复数相乘
+    public static FBComplexList multi(FBComplexList cmp1,FBComplexList cmp2){//复数相乘
         int len=cmp1.im.length;
         double[] cmp1_re=cmp1.getRe();
         double[] cmp1_im=cmp1.getIm();  
@@ -165,7 +152,7 @@ public class FBComplexList{
      * @param cmp 要乘伤的数组
      * @return 相乘的结果
      */
-     public FBComplexList muti(FBComplexList cmp){//复数相乘
+     public FBComplexList multi(FBComplexList cmp){//复数相乘
         double[] cmp_re=cmp.getRe();
         double[] cmp_im=cmp.getIm();  
         double res_im[]=new double[len];
@@ -175,10 +162,10 @@ public class FBComplexList{
                 throw new FBComplexException("阵列维度必须相等");
             }else{
                 for(int i=0;i<len;i++) {
-                res_re[i]=cmp_re[i]*re[i]-cmp_im[i]*im[i];
-                res_im[i]=cmp_re[i]*im[i]+cmp_im[i]*re[i];
-                return new FBComplexList(res_re,res_im); 
-        }
+                res_re[i]=cmp_re[i]*this.re[i]-cmp_im[i]*this.im[i];
+                res_im[i]=cmp_re[i]*this.im[i]+cmp_im[i]*this.re[i];
+                }
+                return new FBComplexList(res_re,res_im);         
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -254,7 +241,7 @@ public class FBComplexList{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return this.muti(a1);    
+        return this.multi(a1);    
     }
 /**
  * 求复数阵列的除法,自身为被除数数
@@ -270,7 +257,7 @@ public FBComplexList dev(double a){
         throw e;
     }
 
-    return this.muti(new FBComplexList(0, FBDataGen.getLineSeq(a1, a1, this.len)));    
+    return this.multi(new FBComplexList(0, FBDataGen.getLineSeq(a1, a1, this.len)));    
 }
     /**
      * 两个复数相加(静态方法，产生新对象)
@@ -430,12 +417,24 @@ public static FBComplexList getInte(FBComplexList y,double[] x){
  * 带限带宽内逆傅里叶变换
  * @param s     频域数据
  * @param f     附加频率
- * @param br    带限带宽 
  * @param t    `时域范围 
  * @return      逆变换结果
  */
-public FBComplexList getIDTFT(FBComplexList s,double[] f,double[] br,double[] t){
-    return null;
+public static FBComplexList getIDTFT(FBComplexList s,double[] f,double[] t){
+    double[] res_re=new double[t.length];
+    double[] res_im=new double[t.length];
+
+    FBComplexList tmp;
+    
+    for (int i = 0; i < t.length; i++) {
+        FBComplexList wn=FBComplexList.exp(new FBComplexList(0, FBDataGen.multi(f , 2*Math.PI*t[i])));//wn即exp(j*2*pi*f*t)
+        tmp=FBComplexList.getInte(s.multi(wn), f);
+        res_re[i]=tmp.getRe()[s.len-1];
+        res_im[i]=tmp.getIm()[s.len-1];
+    }
+
+    return new FBComplexList(res_re, res_im);
+
 }
 
 /**
@@ -455,12 +454,18 @@ public static FBComplexList exp(FBComplexList cmp){
     return new FBComplexList(res_re, res_im);
 }
     public static void main(String[] args){
-        double[] bw=FBDataGen.getLineSeq(0, 15e6, 10000);
-        double[] y= FBBocCal.getGBOC(8,4, bw);
-        double lambda=FBDataGen.getInte(y, bw)[10000-1];
+        double[] bw=FBDataGen.getLineSeq(-12e6, 12e6, 1000);
+        double[] y= FBBocCal.getGBOC(10,5, bw);
+        double lambda=FBDataGen.getInte(y, bw)[100-1];
+        //new FBChartFrame(bw, y);
         y=FBDataGen.multi(y, 1/lambda);
         y=FBDataGen.getInte(y, bw);
-        new FBChartFrame(bw, y);
-        System.out.println(10*Math.log10(y[y.length-1]/y[y.length*24/30]));
+        double[] t=FBDataGen.getLineSeq(-0.2e-6, 0.2e-6, 2000);
+        FBComplexList B=FBComplexList.getIDTFT(new FBComplexList(y, 0), bw, t);
+        FBChartFrame ch;
+        ch= new FBChartFrame(t, B.module());
+        ch.setLineWidth(4);
+  
+       
     }
 }
