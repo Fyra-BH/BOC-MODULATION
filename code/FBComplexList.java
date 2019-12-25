@@ -5,6 +5,7 @@
 package fbcode.math;
 
 import fbcode.tools.FBConsole;
+import fbcode.gui.FBChartFrame;
 import fbcode.math.FBDataGen;
 /**
  * 复数阵列异常
@@ -16,6 +17,10 @@ class FBComplexException extends Exception{
 }
 
 public class FBComplexList{
+
+    private int len;
+    private double[] re;//实部
+    private double[] im;//虚部
     /**
      * 构造一个复数，参数均为double
      * @param re1 实部
@@ -47,9 +52,27 @@ public class FBComplexList{
         this.im=im;    
         this.len=re.length;
     }
-    private int len;
-    private double[] re;//实部
-    private double[] im;//虚部
+/**
+ * 
+ * @param re
+ * @param im
+ */
+    public FBComplexList(double re,double[]im){
+        this.re=FBDataGen.getLineSeq(re, re, im.length);
+        this.im=im;    
+        this.len=im.length;        
+    }
+/**
+ * 
+ * @param re
+ * @param im
+ */
+    public FBComplexList(double[] re,double im){
+        this.im=FBDataGen.getLineSeq(im, im, re.length);
+        this.re=re;    
+        this.len=re.length;        
+    }
+
     /**
      * 写入实部
      * @param f 实部
@@ -232,6 +255,22 @@ public class FBComplexList{
         }
         return this.muti(a1);    
     }
+/**
+ * 求复数阵列的除法,自身为被除数数
+ * @param a 除数数组
+ * @return 除法的结果
+ * @throws Exception 除数可能为零
+ */
+public FBComplexList dev(double a){
+    double a1=0;
+    try {
+        a1=1/a;
+    } catch (Exception e) {
+        throw e;
+    }
+
+    return this.muti(new FBComplexList(0, FBDataGen.getLineSeq(a1, a1, this.len)));    
+}
     /**
      * 两个复数相加(静态方法，产生新对象)
      * @param cmp1 加数1
@@ -362,6 +401,42 @@ public double[] angle(){
     }
     return res;
 }
+
+/**
+ * 复数积分(定积分)
+ * @param y     被积函数
+ * @param x     积分变量（可以事时间，也可以时频率）
+ * @return
+ */
+public static FBComplexList getInte(FBComplexList y,double[] x){
+    double res_re[]=new double[y.len];
+    double res_im[]=new double[y.len];
+    res_im[0]=y.getIm()[0]*x[0];
+    res_re[0]=y.getRe()[0]*x[0];
+    
+    double[] y_im=y.getIm();
+    double[] y_re=y.getRe();
+
+    for (int i = 1; i < res_im.length; i++) {
+        res_re[i]=res_re[i-1]+y_re[i]*(x[i]-x[i-1]);
+        res_im[i]=res_im[i-1]+y_im[i]*(x[i]-x[i-1]);
+    }
+
+    return new FBComplexList(res_re, res_im);
+}
+
+/**
+ * 带限带宽内逆傅里叶变换
+ * @param s     频域数据
+ * @param f     附加频率
+ * @param br    带限带宽 
+ * @param t    `时域范围 
+ * @return      逆变换结果
+ */
+public FBComplexList getIDTFT(FBComplexList s,double[] f,double[] br,double[] t){
+    return null;
+}
+
 /**
  * 通过欧拉公式计算复数幂
  * @param cmp 复指数阵列
@@ -379,12 +454,6 @@ public static FBComplexList exp(FBComplexList cmp){
     return new FBComplexList(res_re, res_im);
 }
     public static void main(String[] args){
-        FBDataGen gen=new FBDataGen(100,0.05);
-        double[] re=gen.getCosArray();
-        double[] im=gen.getSinArray();
-        FBComplexList a=new FBComplexList(re, im);
-        a.prt();
-        a=FBComplexList.exp(a);
-        a.prt();
+
     }
 }
