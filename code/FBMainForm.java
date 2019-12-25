@@ -166,30 +166,60 @@ class BocPanel extends JPanel{
         add(lfpanel);
         add(rtpanel);
 
+        /**点击按键1绘制时域图像*/
+        b1.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b1){
+                    /** 首先获取BOC各项参数 */
+                    try {
+                        BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
+                        BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
+                        BOC_BW=Double.valueOf(tf_boc_bw.getText())*1e6;
+                        if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BW>0){
+                            /**do nothing */
+                        }else{
+                            JOptionPane.showMessageDialog(null, "请输入正确参数");
+                            return;
+                        }                        
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        //TODO: handle exception
+                    }
+
+                    double[] t=FBDataGen.getLineSeq(0,1/(BOC_ALPHA*1.023e6)*50,10000);//这个10000不能动！
+                    double[] s=FBBocCal.getBBS(BOC_ALPHA,BOC_BETA,t);
+                    /**生成图像 */
+                    if(rb1.isSelected()==false){
+                        rtpanel.removeAll();
+                        FBChartPanel cp= new FBChartPanel(t,s,600,400);
+                        cp.setYscaleOn(false);      
+                        cp.setLineWidth(6);               
+                        rtpanel.add(cp);
+                    }else{
+                        if(chframe!=null){
+                            chframe.setVisible(false);
+                        }
+                        chframe= new FBChartFrame(t,s,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
+                    }     
+                }
+            }
+        });
+
         /**点击按键2绘制功率普 */
         b2.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent arg0){
                     if(arg0.getSource()==b2){                        
                     /**首先获取BOC各项参数 */
                         try {
-                                if(Integer.valueOf( tf_boc_alpha.getText())==0){
+                                BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
+                                BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
+                                BOC_BW=Double.valueOf(tf_boc_bw.getText())*1e6;
+                                if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BW>0){
+                                    /**do nothing */
+                                }else{
                                     JOptionPane.showMessageDialog(null, "请输入正确参数");
                                     return;
-                                }else{
-                                    BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
-                                }      
-                                if(Integer.valueOf( tf_boc_beta.getText())==0){
-                                    JOptionPane.showMessageDialog(null, "请输入正确参数");
-                                    return;
-                                }else{
-                                    BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
-                                }  
-                                if(Double.valueOf(tf_boc_bw.getText())<=0){
-                                    JOptionPane.showMessageDialog(null, "请输入正确参数");
-                                    return;
-                                }else{
-                                    BOC_BW=Double.valueOf(tf_boc_bw.getText())*1e6;
-                                } 
+                                }
                             } catch (Exception e) {
                             JOptionPane.showMessageDialog(null, "请输入正确参数");
                             return;
@@ -197,14 +227,17 @@ class BocPanel extends JPanel{
 
                         double[] GBOC=FBBocCal.getGBOC(BOC_ALPHA,BOC_BETA,BOC_BW);
                         double[] f=FBDataGen.getLineSeq(-BOC_BW/2,BOC_BW/2,10000);//这个10000不能动！
+                        
                         if(rb1.isSelected()==false){
-                            rtpanel.removeAll();
-                            rtpanel.add(new FBChartPanel(f,GBOC,600,400));
+                            rtpanel.removeAll();   
+                            FBChartPanel cp= new FBChartPanel(f,GBOC,600,400);
+                            rtpanel.add(cp);
                         }else{
                             if(chframe!=null){
                                 chframe.setVisible(false);
+                                chframe.setEnabled(false);
                             }
-                            chframe= new FBChartFrame(f,GBOC,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
+                            chframe= new FBChartFrame(f,GBOC,"归一化"+"BOC("+BOC_ALPHA+","+BOC_BETA+")");
                         }
                     }
             }
@@ -217,6 +250,7 @@ class BocPanel extends JPanel{
                     if(chframe==null){
                         JOptionPane.showMessageDialog(null, "请先勾选弹出窗口按钮并点击频域图像按钮");
                     }else{
+                        chframe.setVisible(true);
                         File mypath=new File("./snapshot");
                         fc=new JFileChooser("./snapshot/");//用于选择保存文件
                         fc.setFileFilter(new javax.swing.filechooser.FileFilter(){
@@ -236,20 +270,20 @@ class BocPanel extends JPanel{
                                     return false;
                             }
                         });
-
-                        mypath.mkdir();
-                        fc.showOpenDialog(fc);//浏览文件
-
-                        chframe.setAlwaysOnTop(true);
-                        chframe.setLocation(0,0);
+                        
+                    mypath.mkdir();
+                    fc.showOpenDialog(fc);//浏览文件
+                    if(fc.getSelectedFile()!=null){//没选则不执行
                         try {
                             Thread.sleep(500);                            
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                       if(fc.getSelectedFile()!=null)//没选则不执行
-                         new FBSnapShot(fc.getSelectedFile().toPath().toString(),"png").snapShot(chframe.getLocation().x+10,chframe.getLocation().y,chframe.getSize().width-20,chframe.getSize().height-10);
+                        chframe.setAlwaysOnTop(true);
+                        chframe.setLocation(0,0);
+                        new FBSnapShot(fc.getSelectedFile().toPath().toString(),"png").snapShot(chframe.getLocation().x+10,chframe.getLocation().y,chframe.getSize().width-20,chframe.getSize().height-10);
                         chframe.setAlwaysOnTop(false);
+                       }
                     }
                 }
             }

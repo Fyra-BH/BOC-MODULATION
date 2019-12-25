@@ -155,5 +155,10 @@ import fbcode.math.*;
     public static void main(String[] args) {
 
         System.out.println(FBTools.getOrder(1.3));
+
+        for (int i = 0; i < 1000; i++) {
+            
+        }
+
     }
  }

@@ -67,6 +67,29 @@ public class FBChartFrame extends JFrame{
      public void setGridOn(Boolean bool){
         this.chart.setGridOn(bool);
      }
+     /**
+      * 是否打开X刻度
+      *@param bool  是/否
+      */
+      public void setXscaleOn(boolean b){
+         chart.setXscaleOn(b);
+        }
+     /**
+     * 是否打开Y刻度
+     *@param bool  是/否
+     */
+         public void setYscaleOn(boolean b){
+         chart.setYscaleOn(b);
+     }
+
+      /**
+       * 设置线条粗细
+       * @param w 粗细（正数）
+       */
+     public void setLineWidth(float w){
+        chart.setLineWidth(w);
+     }
+
 }
 
 /**

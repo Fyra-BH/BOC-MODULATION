@@ -50,6 +50,8 @@ import java.text.DecimalFormat;
     public static final int BLANK_REMAINED=120;//边界留白
     public static final int GRID_WIDTH=100;//栅格大小
 
+    private float line_width=1.0f;
+
     private boolean gridOn=true;//是否打开栅格
     private boolean X_SCALE_ON=true;//x轴刻度
     private boolean Y_SCALE_ON=true;//y轴刻度
@@ -150,6 +152,16 @@ import java.text.DecimalFormat;
       public void setYscaleOn(boolean b){
          this.Y_SCALE_ON=b;
         }
+      /**
+       * 设置线条粗细
+       * @param w 粗细（正数）
+       */
+      public void setLineWidth(float w){
+         if(w<0)
+            return;
+         this.line_width=w;
+      }
+      
      /**
       * 绘图方法
       */
@@ -158,7 +170,7 @@ import java.text.DecimalFormat;
         /**绘制轮廓 */
         BasicStroke bs=new BasicStroke(
            2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
-        );
+        );        
         Rectangle2D rect=new Rectangle2D.Double(0,0,50,50);
         g.setStroke(bs);
         g.setColor(new Color(0x79,0x55,0x48));
@@ -188,7 +200,7 @@ import java.text.DecimalFormat;
 
          /**下面画曲线 */
          bs=new BasicStroke(
-           2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
+           line_width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
         );
             g.setStroke(bs);
             g.setColor(new Color(0xc6,0x28,0x28));

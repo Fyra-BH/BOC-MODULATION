@@ -86,10 +86,22 @@ public class FBBocCal{
         return getBBS((int)alpha*2/beta , (double)alpha*1.023e6,  t);
     }
 
+    /**
+     * 获取随机基带信号
+     * @param alpha     boc参数
+     * @param beta      同上
+     * @param N         随机码个数
+     * @return
+     */
+    public static double[] getBBS(int alpha,int beta,int N ){
+        double[] t=FBDataGen.getLineSeq(0, (double)(N/beta/1.023e6), 10000);
+        return getBBS((int)alpha*2/beta , (double)alpha*1.023e6,  t);
+    }
+
 
     public static void main(String[] args) {
-        double[] t=FBDataGen.getLineSeq(0, 1/1.023e6*20, 1000);
-        double[] s= FBBocCal.getBBS(10, 5, t);
+        double[] s= FBBocCal.getBBS(10, 5, 20);
+        double[] t=FBDataGen.getLineSeq(0, 1/1.023e6*20, s.length);
         new FBChartFrame(t, s);
        
     }
