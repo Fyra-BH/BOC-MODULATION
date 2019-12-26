@@ -457,8 +457,6 @@ public static FBComplexList exp(FBComplexList cmp){
         double[] bw=FBDataGen.getLineSeq(-12e6, 12e6, 1000);
         double[] y= FBBocCal.getGBOC(10,5, bw);
         double lambda=FBDataGen.getInte(y, bw)[100-1];
-        //new FBChartFrame(bw, y);
-        //y=FBDataGen.multi(y, 1/lambda);
         double[] t=FBDataGen.getLineSeq(-0.2e-6, 0.2e-6, 2000);
         FBComplexList B=FBComplexList.getIDTFT(new FBComplexList(y, 0), bw, t);
         FBChartFrame ch;

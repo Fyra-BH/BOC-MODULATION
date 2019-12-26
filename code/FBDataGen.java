@@ -4,6 +4,8 @@
  */
 package fbcode.math;
 
+import fbcode.gui.FBChartFrame;
+import fbcode.tools.FBConsole;
 
 public class FBDataGen{
     static final double pi=Math.PI;
@@ -126,6 +128,16 @@ public class FBDataGen{
         }
         return res;
     }
+
+    /**
+     * Sa函数
+     * @param ph    相位数组
+     * @return      Sa函数序列
+     */
+    public static double[] getSincArray(double[] ph){
+        return FBDataGen.div(FBDataGen.getSinArray(ph), ph);
+    }
+
     /**
      * 
      * @param x
@@ -152,8 +164,8 @@ public class FBDataGen{
         }
         return res;
     }
-    /**
-     * 
+    /**安全除法
+     * 使用1.7e308代替无穷
      * @param x
      * @param y
      * @return
@@ -161,7 +173,10 @@ public class FBDataGen{
     public static double[] div(double[] x,double[] y){
         double[] res=new double[x.length];
         for(int i=0;i<x.length;i++){
-            res[i]=x[i]/y[i];
+            if(y[i]!=0)
+                res[i]=x[i]/y[i];
+            else
+                res[i]=1.7e308/x[i]*Math.abs(x[i]);
         }
         return res;
     }
@@ -232,6 +247,21 @@ public class FBDataGen{
         return res;
     }
 
+    /**
+     * 计算微分
+     * @param y 输入变量
+     * @param x 微分变量
+     * @return  微分
+     */
+    public static double[] getDiff(double[] y,double[] x){
+        double[] res=new double[y.length];
+        for (int i = 0; i < res.length-1; i++) {
+            res[i]=(y[i+1]-y[i])/(x[i+1]-x[i]);
+        }
+        res[res.length-1]=res[res.length-2];
+        return res;
+    }
+
     public static double[] getMode(double[] in){
         double[] res=new double[in.length];
         for (int i = 0; i < in.length; i++) {
@@ -253,4 +283,14 @@ public class FBDataGen{
         return res;
     }
 
+    public static void main(String[] args) {
+        double[] x=FBDataGen.getLineSeq(-9,9.00001, 10000);
+        //FBConsole.prt(x);
+       // System.out.println("x_len="+x.length);
+        double[] y= FBDataGen.getSinArray(x);
+        //FBConsole.prt(y);
+        //System.out.println("y_len="+y.length);
+        FBChartFrame f= new FBChartFrame(x,FBDataGen.getSinArray(x));
+        f.setCh2(x,FBDataGen.getDiff(FBDataGen.getSinArray(x), x));
+    }
 }

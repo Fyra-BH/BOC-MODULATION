@@ -16,6 +16,8 @@ import fbcode.math.*;
     public FBTools(){
 
     }
+
+
     /**
      * 返回序列中最大数值及其索引
      * @param input 输入数组
@@ -178,10 +180,27 @@ import fbcode.math.*;
         }
     }
 
+    /**
+     * 数组截取
+     * @param in        输入数组
+     * @param begin     开始序号
+     * @param len       截取的长度
+     * @return          截取的数组
+     */
+    public static double[] pic(double[] in,int begin,int len){
+        double[] res=new double[len];
+        for (int i = 0; i < len; i++) {
+            res[i]=in[i+begin];
+        }
+        return res;
+    }
     public static void main(String[] args) {
 
-        System.out.println(FBTools.getOrder(1.31e7));
-        System.out.println(FBTools.getBase(1.31e7));
+        // System.out.println(FBTools.getOrder(1.31e7));
+        // System.out.println(FBTools.getBase(1.31e7));
 
+        double[] x=FBDataGen.getLineSeq(-1, 1, 100);
+        double[] y=FBTools.pic(x,25,50);
+        FBConsole.prt(y);
     }
  }

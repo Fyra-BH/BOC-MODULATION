@@ -49,8 +49,7 @@ public class FBMainForm extends JFrame{
 
     public FBMainForm(){
         super("BOC 与 BPSK调制的分析");
-        setSize(900,550);
-        setMinimumSize(new Dimension(480,320));
+        setSize(900,640);
         setLocation(600,300);
         setResizable(false);
         JTabbedPane jtp =new JTabbedPane();
@@ -63,7 +62,7 @@ public class FBMainForm extends JFrame{
         setVisible(true);
     }
     public static void main(String[] args) {
-        new FBMainForm(); 
+        new FBMainForm();    
     }
 }
 
@@ -92,6 +91,7 @@ class BocPanel extends JPanel{
     private int BOC_BETA=5;
     private double BOC_BW=3.0e6;//3M带宽
     private boolean CHART_FRAME_ENABLE=false;//弹窗式图像
+    private boolean CH2_ENABLE=false;//通道2
     private FBChartFrame chframe;
     private JFileChooser fc;
 
@@ -101,13 +101,14 @@ class BocPanel extends JPanel{
 
     public BocPanel(){
         JPanel lfpanel=new JPanel();
-        JPanel rtpanel=new  BackgroundPanel(new ImageIcon("icon/CHART.png").getImage());
+        JPanel rtpanel=new JPanel();//  BackgroundPanel(new ImageIcon("icon/CHART.png").getImage());
        // rtpanel.add(new BackgroundPanel(new ImageIcon("icon/CHART.png").getImage()));
+       
 
         JTextField tf_boc_alpha=new JTextField("10");
         JTextField tf_boc_beta=new JTextField("5");
         JTextField tf_boc_bw_trans=new JTextField("30");
-        JTextField tf_boc_bw_recv=new JTextField("30");
+        JTextField tf_boc_bw_recv=new JTextField("24");
 
         JButton b1=new JButton("时域图像",new ImageIcon("icon/TIME_ICON.png"));
         JButton b2=new JButton("频域图像",new ImageIcon("icon/FREQ_ICON.png"));
@@ -115,6 +116,7 @@ class BocPanel extends JPanel{
         JButton b4=new JButton("计算参数",new ImageIcon("icon/cal.png"));
         JButton b5=new JButton("保存截图",new ImageIcon("icon/SNAPSHOT.png"));
         JRadioButton rb1=new JRadioButton("弹出图像");
+        JRadioButton rb2=new JRadioButton("打开通道2");
 
         lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
         rtpanel.setBorder(BorderFactory.createBevelBorder(1));
@@ -248,12 +250,12 @@ class BocPanel extends JPanel{
                             if(chframe!=null){
                               //  chframe.setVisible(false);
                             }
-                            chframe= new FBChartFrame(bw,GBOC,"归一化"+"BOC("+BOC_ALPHA+","+BOC_BETA+")");
+                            chframe= new FBChartFrame(bw,GBOC,"归一化"+"BOC("+BOC_ALPHA+","+BOC_BETA+")的功率谱");
                         }
                     }
             }
         });
-
+        /**点击按键3绘制自相关函数 */
         b3.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent arg0){
                 if(arg0.getSource()==b3){
@@ -274,9 +276,9 @@ class BocPanel extends JPanel{
                     }
                     
 
-                    double[] bw=FBDataGen.getLineSeq(-BOC_BW/2,BOC_BW/2,1000);//这个10000不能动！
+                    double[] bw=FBDataGen.getLineSeq(-BOC_BW/2,BOC_BW/2,1000);//这个1000不能动！
                     double[] GBOC=FBBocCal.getGBOC(BOC_ALPHA,BOC_BETA,bw);
-                    double[] tau=FBDataGen.getLineSeq(-1e-6,1e-6,2000);
+                    double[] tau=FBDataGen.getLineSeq(-0.2e-6,0.2e-6,2000);
                     double[] Rt=FBBocCal.getRt(GBOC, bw,tau);
                     if(rb1.isSelected()==false){
                         rtpanel.removeAll();   
@@ -343,10 +345,22 @@ class BocPanel extends JPanel{
 
 class BpskPanel extends JPanel{
 
+    private double BPSK_RC=1.023;
+    private double BPSK_BT=30e6;//3M带宽
+    private double BPSK_BC=24e6;//3M带宽
+    private boolean CHART_FRAME_ENABLE=false;//弹窗式图像
+    private FBChartFrame chframe;
+    private JFileChooser fc;
+
     public BpskPanel(){
 
         JPanel lfpanel=new JPanel();
-        JPanel rtpanel=new  BackgroundPanel(new ImageIcon("icon/CHART.png").getImage());
+        JPanel rtpanel=new  JPanel();//BackgroundPanel(new ImageIcon("icon/CHART.png").getImage());
+
+
+        JTextField tf_bpsk_rate=new JTextField("10.23");
+        JTextField tf_bpsk_bw_trans=new JTextField("30");
+        JTextField tf_bpsk_bw_recv=new JTextField("30");
 
         this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
         add(lfpanel);
@@ -354,18 +368,173 @@ class BpskPanel extends JPanel{
 
         JButton b1=new JButton("时域图像",new ImageIcon("icon/TIME_ICON.png"));
         JButton b2=new JButton("频域图像",new ImageIcon("icon/FREQ_ICON.png"));
+        JButton b3=new JButton("相关函数",new ImageIcon("icon/R.png"));
         JButton b4=new JButton("计算参数",new ImageIcon("icon/cal.png"));
+        JButton b5=new JButton("保存截图",new ImageIcon("icon/SNAPSHOT.png"));
+        JRadioButton rb1=new JRadioButton("弹出图像");
+        JRadioButton rb2=new JRadioButton("打开通道2");
 
         lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
         rtpanel.setBorder(BorderFactory.createBevelBorder(1));
 
         lfpanel.setLayout(new BoxLayout(lfpanel,BoxLayout.Y_AXIS));
+
+
+        lfpanel.setLayout(new BoxLayout(lfpanel,BoxLayout.Y_AXIS));
         /**下面加入按键与参数框 */
-        
-        lfpanel.add(b1);
-        lfpanel.add(b2);
-        lfpanel.add(b4);
-        lfpanel.add(Box.createVerticalGlue());
+        JPanel lab_temp= new JPanel();//临时面板，最终将加入lfpanel
+        lab_temp.setLayout(new BoxLayout(lab_temp, BoxLayout.Y_AXIS));
+        lab_temp.add(Box.createRigidArea(new Dimension(0,10)));
+        lab_temp.add(new JLabel("请设置参数:"));
+        lab_temp.add(new JLabel("BPSK码率fc(MHz)"));
+        lab_temp.add(new JLabel("发射带宽βt(MHz)"));
+        lab_temp.add(new JLabel("接收带宽βr(MHz)"));
+        lab_temp.add(Box.createRigidArea(new Dimension(0,10)));
+            /**加入输入参数的面板 */        
+            JPanel lab_input= new JPanel();//输入面板
+            lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
+            lab_input.add(new JLabel("   fc=  "));
+            tf_bpsk_rate.setMaximumSize(new Dimension(80,50));
+            lab_input.add(tf_bpsk_rate);
+            lab_temp.add(lab_input);
+            
+
+
+            lab_input= new JPanel();//输入面板
+            lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
+            lab_input.add(new JLabel("   βt=  "));
+            tf_bpsk_bw_trans.setMaximumSize(new Dimension(80,50));
+            lab_input.add(tf_bpsk_bw_trans);
+            lab_temp.add(lab_input);
+
+            lab_input= new JPanel();//输入面板
+            lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
+            lab_input.add(new JLabel("   βr=  "));
+            tf_bpsk_bw_recv.setMaximumSize(new Dimension(80,50));
+            lab_input.add(tf_bpsk_bw_recv);
+            lab_temp.add(lab_input);
+
+            lab_temp.setBorder(BorderFactory.createBevelBorder(1));
+            lab_temp.add(Box.createRigidArea(new Dimension(10,40)));
+            lab_temp.add(b1);
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            lab_temp.add(b2);
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            lab_temp.add(b3);
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            lab_temp.add(b4); 
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            lab_temp.add(b5); 
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+        lfpanel.add(lab_temp);//一次性加入左边栏
+        lfpanel.add(Box.createVerticalGlue()); 
+        lfpanel.add(rb1);  
+        lfpanel.add(rb2);  
+
+        this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
+        add(lfpanel);
+        add(rtpanel);
+
+        /**点击按键1绘制时域图像*/
+        b1.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b1){
+
+                }
+            }
+        });
+
+        /**点击按键2绘制频域图像 */
+        b2.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b2){
+                    /**首先获取BPSK各项参数 */
+                    try {
+                        BPSK_RC=Double.valueOf( tf_bpsk_rate.getText())*1e6;
+                        BPSK_BT=Double.valueOf(tf_bpsk_bw_trans.getText())*1e6;
+                        BPSK_BC=Double.valueOf(tf_bpsk_bw_recv.getText())*1e6;
+                        if(BPSK_BC>0&&BPSK_BT>0&&BPSK_RC>0){
+                            /**do nothing */
+                        }else{
+                            JOptionPane.showMessageDialog(null, "请输入正确参数");
+                            return;
+                        }
+                    } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "请输入正确参数");
+                    return;
+                    }  
+
+                    double[] bw=FBDataGen.getLineSeq(-BPSK_BT/2,BPSK_BT/2,10000);//这个10000不能动！
+                    double[] GBPSK=FBBocCal.getGBPSK(BPSK_RC, bw);
+                    
+                    if(rb1.isSelected()==false){
+                        rtpanel.removeAll();   
+                        FBChartPanel cp= new FBChartPanel(bw,GBPSK,600,400);
+                        rtpanel.add(cp);
+                    }else{
+                          //  chframe.setVisible(false);
+                          if(rb2.isSelected()==false){
+                                chframe= new FBChartFrame(bw,GBPSK,"归一化"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
+                            }else{
+                                if(chframe!=null){
+                                    chframe.setVisible(true);
+                                    chframe.setCh2(bw,GBPSK);//打开通道2
+                                    chframe=null;
+                                }else{
+                                    chframe= new FBChartFrame(bw,GBPSK,"归一化"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
+                                }
+                            }                                            
+                    }                    
+
+                }
+            }
+        });
+
+        /**点击按键3绘制自相关函数 */
+        b3.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b3){
+                    /**首先获取BPSK各项参数 */
+                    try {
+                        BPSK_RC=Double.valueOf( tf_bpsk_rate.getText())*1e6;
+                        BPSK_BT=Double.valueOf(tf_bpsk_bw_trans.getText())*1e6;
+                        BPSK_BC=Double.valueOf(tf_bpsk_bw_recv.getText())*1e6;
+                        if(BPSK_BC>0&&BPSK_BT>0&&BPSK_RC>0){
+                            /**do nothing */
+                        }else{
+                            JOptionPane.showMessageDialog(null, "请输入正确参数");
+                            return;
+                        }
+                    } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "请输入正确参数");
+                    return;
+                    }                      
+
+                    double[] bw=FBDataGen.getLineSeq(-BPSK_BT/2,BPSK_BT/2,1000);//这个1000不能动！
+                    double[] GBPSK=FBBocCal.getGBPSK(BPSK_RC,bw);
+                    double[] tau=FBDataGen.getLineSeq(-0.2e-6,0.2e-6,2000);
+                    double[] Rt=FBBocCal.getRt(GBPSK, bw,tau);
+                    if(rb1.isSelected()==false){
+                        rtpanel.removeAll();   
+                        FBChartPanel cp= new FBChartPanel(tau,Rt,600,400);
+                        rtpanel.add(cp);
+                    }else{
+                        if(rb2.isSelected()==false){
+                            chframe= new FBChartFrame(tau,Rt,"自相关函数"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
+                        }else{
+                            if(chframe!=null){
+                                chframe.setVisible(true);
+                                chframe.setCh2(tau,Rt);//打开通道2
+                                chframe=null;
+                            }else{
+                                chframe= new FBChartFrame(tau,Rt,"自相关函数"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
+                            }
+                        }                         
+                    }                    
+                }
+            }
+        });        
+
     }
 }
 

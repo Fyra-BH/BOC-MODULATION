@@ -40,7 +40,22 @@ public class FBChartFrame extends JFrame{
       setLocation(800,300);
       this.setVisible(true);
    }
-
+     /**
+      * 设置通道2数据
+      * @param x  图像纵轴数据
+      * @param y  横轴数据
+      */
+   public void setCh2(double[] x,double[] y){
+      chart.setCh2(x,y);
+      chart.repaint();
+   }
+   /**
+   * 设置通道2是否打开
+   * @param b
+   */
+  public void setCh2Close(){
+   chart.setCh2Close();
+}
           /**
       * 设置显示区域
       * @param x  横向大小
@@ -90,6 +105,11 @@ public class FBChartFrame extends JFrame{
         chart.setLineWidth(w);
      }
 
+     public static void main(String[] args) {
+      double[] x=FBDataGen.getLineSeq(0, 2*Math.PI, 10000);  
+      FBChartFrame f= new FBChartFrame(x, FBDataGen.getSinArray(x));
+      f.setCh2(x,FBDataGen.getCosArray(x));
+     }
 }
 
 /**

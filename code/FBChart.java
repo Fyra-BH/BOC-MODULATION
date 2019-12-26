@@ -29,8 +29,14 @@ import java.text.DecimalFormat;
 
  public class FBChart extends Canvas{
 
-    private double[] x_resampled;//以1920×1080为基准的坐标，将作为基础数据进行放缩
-    private double[] y_resampled;//同上
+   private double[] x_resampled;//以1920×1080为基准的坐标，将作为基础数据进行放缩
+   private double[] y_resampled;//同上
+
+   private double[] x_resampled_ch2;//以1920×1080为基准的坐标，将作为基础数据进行放缩(第二通道)
+   private double[] y_resampled_ch2;//同上
+   private double[] dataForUpsampling_ch2;//配合使用
+
+   private boolean CH2_ON=false;
 
     private double[] x_range;//定义域(min~max)
     private double[] y_range;//值域(min~max)
@@ -93,6 +99,31 @@ import java.text.DecimalFormat;
             }
         }
      }
+
+     /**
+      * 设置通道2数据
+      * @param x  图像纵轴数据
+      * @param y  横轴数据
+      */
+     public void setCh2(double[] x,double[] y){
+      this.x_resampled_ch2=FBTools.resample(x,MAX_WIDTH,x.length);
+      this.y_resampled_ch2=FBTools.resample(y,MAX_WIDTH,y.length);
+      if(y_resampled_ch2.length==y_resampled.length)
+         if(y_resampled_ch2.length==y_resampled.length)
+            if(x.length==y.length){
+               this.CH2_ON=true;
+            }else{
+               this.CH2_ON=false;
+            }
+     }
+   /**
+   * 设置通道2是否打开
+   * @param b
+   */
+   public void setCh2Close(){
+      this.CH2_ON=false;
+   }
+   
      /**
       * 设置显示区域
       * @param x  横向大小
@@ -161,7 +192,8 @@ import java.text.DecimalFormat;
             return;
          this.line_width=w;
       }
-      
+
+
      /**
       * 绘图方法
       */
@@ -241,13 +273,44 @@ import java.text.DecimalFormat;
                      g.setFont(new Font("Dialog",Font.PLAIN,16));
                      DecimalFormat df=new DecimalFormat("#.00");
                      if(Math.abs(FBTools.getOrder(y_scale))>=0){//需要使用科学计数法
-                        g.drawString(df.format(FBTools.getBase(x_range[0]+x_scale*i/N)) +"e"+FBTools.getOrder(x_range[1]-x_scale*i/N), x_start+i*this.x_zone/N+g.getFont().getSize()/2,y_start+y_zone+g.getFont().getSize()*2);
+                        g.drawString(df.format(FBTools.getBase(x_range[0]+x_scale*i/N)) +"e"+FBTools.getOrder(x_range[1]+x_scale*i/N), x_start+i*this.x_zone/N+g.getFont().getSize()/2,y_start+y_zone+g.getFont().getSize()*2);
                      }
                     }
                }
 
          }
-     }
+
+/**以下代码为双通道测试版 */
+      if(CH2_ON){
+            if(downSampling){//当数据足够多时
+               dis_temp =FBTools.resample(y_resampled_ch2,this.x_zone,y_resampled.length);//这是用于显示的原始数据，后面将进行y轴放缩
+            }else{//数据较少时
+               dis_temp =FBTools.resample(dataForUpsampling,this.x_zone,dataForUpsampling.length);
+               FBConsole.prt(dis_temp);
+            }
+            /**下面将进行纵轴放缩及翻转 */
+            dis=new int[dis_temp.length];
+            if(this.y_scale<this.y_zone*2/3){//小于显示高度的一半则放缩
+               for(int i=0;i<dis_temp.length;i++){
+                  dis[i]=(int)(dis_temp[i]*this.y_zone/this.y_scale);
+               }
+            }else if(this.y_scale>this.x_zone){//大于显示尺寸
+               for(int i=0;i<dis_temp.length;i++){
+                  dis[i]=(int)(dis_temp[i]*this.y_zone/this.y_scale);
+            }
+
+      }
+               /**下面画曲线 */
+               bs=new BasicStroke(
+               line_width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL
+            );
+               g.setStroke(bs);
+               g.setColor(new Color(0x33,0x33,0xcc));
+            for(int i=0;i<dis_temp.length-1;i++){
+               g.drawLine(i+BLANK_REMAINED/2, y_center-dis[i]+BLANK_REMAINED/4+y_zone/2, i+BLANK_REMAINED/2+1, y_center-dis[i+1]+BLANK_REMAINED/4+y_zone/2);
+            }
+      }
+   }
 
 
  }
