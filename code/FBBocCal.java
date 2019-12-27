@@ -249,7 +249,6 @@ public class FBBocCal{
         //System.out.println(lambda);
         double[] GBPSK_Normalized=FBDataGen.multi(GBPSK,1/lambda);//归一化普密度
         double[] f=FBDataGen.getLineSeq(-br/2, br/2, 10000);//计算RMS时用到的带宽
-
         double res= Math.pow(FBDataGen.getInte(FBDataGen.multi(FBDataGen.pow(f,2),GBPSK_Normalized),bw)[f.length-1],0.5); 
         return FBTools.remain(res, 3);
     }

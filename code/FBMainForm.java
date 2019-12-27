@@ -44,6 +44,7 @@ import fbcode.gui.FBChartFrame;
 import fbcode.gui.FBChartPanel;
 import fbcode.tools.FBSnapShot;
 import fbcode.tools.FBTable;
+import fbcode.tools.FBTools;
 
 public class FBMainForm extends JFrame{
 
@@ -498,14 +499,14 @@ class BpskPanel extends JPanel{
                     }else{
                           //  chframe.setVisible(false);
                           if(rb2.isSelected()==false){
-                                chframe= new FBChartFrame(bw,GBPSK,"归一化"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
+                                chframe= new FBChartFrame(bw, FBTools.getdB(GBPSK),"归一化"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
                             }else{
                                 if(chframe!=null){
                                     chframe.setVisible(true);
-                                    chframe.setCh2(bw,GBPSK);//打开通道2
+                                    chframe.setCh2(bw,FBTools.getdB(GBPSK));//打开通道2
                                     chframe=null;
                                 }else{
-                                    chframe= new FBChartFrame(bw,GBPSK,"归一化"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
+                                    chframe= new FBChartFrame(bw,FBTools.getdB(GBPSK),"归一化"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
                                 }
                             }                                            
                     }                    

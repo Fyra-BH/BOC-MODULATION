@@ -262,6 +262,9 @@ public class FBDataGen{
         return res;
     }
 
+
+
+
     public static double[] getMode(double[] in){
         double[] res=new double[in.length];
         for (int i = 0; i < in.length; i++) {

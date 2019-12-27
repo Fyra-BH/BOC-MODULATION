@@ -163,6 +163,19 @@ import fbcode.math.*;
     public static double getdB(double x){
         return 10*Math.log10(x);
     }
+
+    /**
+     * 计算分贝数
+     * @param x
+     * @return
+     */
+    public static double[] getdB(double[] x){
+        double[] res=new double[x.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i]=10*Math.log10(x[i]);
+        }
+        return res;
+    }
     /**
      * 保留小数点后n位
      * @param x 数值
