@@ -192,19 +192,15 @@ public class FBBocCal{
      * @return          最大功率普密度 
      */
     public static double getBandByPercent(double fc,double per,double bt){
-        double[] bw=FBDataGen.getLineSeq(0.0001, bt/2, 10000);//默认以30MHz带宽计算(单边带)
+        double[] bw=FBDataGen.getLineSeq(0.0001, bt/2, 2000);//默认以30MHz带宽计算(单边带)
         double[] GBPSK= getGBPSK(fc, bw);
         double[] SG=FBDataGen.getInte(GBPSK, bw);//GBOC的积分
-        new FBChartFrame(bw,GBPSK);
-        
         int index=FBTools.match(SG,SG[SG.length-1]*0.90,1);
-        System.out.println(index);
-        return bw[index];
-        
+        return bw[index]*2;
     }
 
     /**
-     * 计算带外损失
+     * 计算带外损失(BOC)
      * @param alpha boc参数
      * @param beta  boc参数
      * @param bt    发射带宽(30MHz)
@@ -215,6 +211,19 @@ public class FBBocCal{
         double[] bw=FBDataGen.getLineSeq(0, bt/2, 10000);//默认以30MHz带宽计算(单边带)
         double[] GBOC= getGBOC(alpha,beta, bw);
         double[] SG=FBDataGen.getInte(GBOC, bw);//GBOC的积分
+        return 10*Math.log10(SG[SG.length-1]/SG[(int)(SG.length*br/bt)]); 
+    }
+    /**
+     * 计算带外损失(BPSK)
+     * @param fc        BPSK码率
+     * @param bt    发射带宽(30MHz)
+     * @param br    接收带宽(24MHz)
+     * @return      带外损失(dB)
+     */
+    public static double getOutOfBandLoss(double fc,double bt,double br){
+        double[] bw=FBDataGen.getLineSeq(0.0001, bt/2, 10000);//默认以30MHz带宽计算(单边带)
+        double[] GBPSK= getGBPSK(fc, bw);
+        double[] SG=FBDataGen.getInte(GBPSK, bw);//GBOC的积分
         return 10*Math.log10(SG[SG.length-1]/SG[(int)(SG.length*br/bt)]); 
     }
     /**
