@@ -1,4 +1,6 @@
 package fbcode.tools;
+import java.math.BigDecimal;
+
 import fbcode.math.*;
 
 /**
@@ -161,6 +163,19 @@ import fbcode.math.*;
     public static double getdB(double x){
         return 10*Math.log10(x);
     }
+    /**
+     * 保留小数点后n位
+     * @param x 数值
+     * @param n 位数
+     * @return  保留后的值
+     */
+    public static double remain(double x,int n){
+        double base=FBTools.getBase(x);
+        base=(double)((int)(Math.pow(10,n)*base));
+        base=base/Math.pow(10,n);
+        String tmp= new String(base+"e"+getOrder(x));
+        return  Double.valueOf(tmp);
+    }
 
     /**
      * 匹配
@@ -198,9 +213,10 @@ import fbcode.math.*;
 
         // System.out.println(FBTools.getOrder(1.31e7));
         // System.out.println(FBTools.getBase(1.31e7));
+        //System.out.println(FBTools.remain(1.36666666661e7,4));
 
         double[] x=FBDataGen.getLineSeq(-1, 1, 100);
         double[] y=FBTools.pic(x,25,50);
-        FBConsole.prt(y);
+      //  FBConsole.prt(y);
     }
  }

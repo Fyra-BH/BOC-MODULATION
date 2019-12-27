@@ -131,7 +131,8 @@ public class FBBocCal{
     public static double getCenterDrift(int alpha,int beta,double bt){
         double[] bw=FBDataGen.getLineSeq(0, bt/2, 10000);//默认以30MHz带宽计算
         double[] GBOC= getGBOC(alpha,beta, bw);
-        return bw[(int)FBTools.max(GBOC)[1]];
+        double res= bw[(int)FBTools.max(GBOC)[1]];
+        return FBTools.remain(res, 3);
     }
 
 // /**
@@ -155,7 +156,8 @@ public class FBBocCal{
     public static double getGMAX(int alpha,int beta,double bt){
         double[] bw=FBDataGen.getLineSeq(0, bt/2, 100000);//默认以30MHz带宽计算
         double[] GBOC= getGBOC(alpha,beta, bw);
-        return  10*Math.log10(FBTools.max(GBOC)[0]) ;
+        double res= 10*Math.log10(FBTools.max(GBOC)[0]) ;
+        return FBTools.remain(res, 3);
     }
 
     /**
@@ -167,7 +169,8 @@ public class FBBocCal{
     public static double getGMAX(double fc,double bt){
         double[] bw=FBDataGen.getLineSeq(-bt/2, bt/2, 10000);//默认以30MHz带宽计算
         double[] GBPSK= getGBPSK(fc,bw);
-        return  10*Math.log10(FBTools.max(GBPSK)[0]) ;
+        double res=  10*Math.log10(FBTools.max(GBPSK)[0]) ;
+        return FBTools.remain(res, 3);
     }
 
     /**
@@ -182,7 +185,8 @@ public class FBBocCal{
         double[] bw=FBDataGen.getLineSeq(0, bt/2, 10000);//默认以30MHz带宽计算(单边带)
         double[] GBOC= getGBOC(alpha,beta, bw);
         double[] SG=FBDataGen.getInte(GBOC, bw);//GBOC的积分
-        return 2*bw[FBTools.match(SG,SG[SG.length-1]*per,1)];
+        double res= 2*bw[FBTools.match(SG,SG[SG.length-1]*per,1)];
+        return FBTools.remain(res, 3);
     }
     /**
      * 计算给定功率百分比对应的带宽(以BPSK发射带宽为基准)
@@ -196,7 +200,8 @@ public class FBBocCal{
         double[] GBPSK= getGBPSK(fc, bw);
         double[] SG=FBDataGen.getInte(GBPSK, bw);//GBOC的积分
         int index=FBTools.match(SG,SG[SG.length-1]*0.90,1);
-        return bw[index]*2;
+        double res= bw[index]*2;
+        return FBTools.remain(res, 3);
     }
 
     /**
@@ -211,7 +216,8 @@ public class FBBocCal{
         double[] bw=FBDataGen.getLineSeq(0, bt/2, 10000);//默认以30MHz带宽计算(单边带)
         double[] GBOC= getGBOC(alpha,beta, bw);
         double[] SG=FBDataGen.getInte(GBOC, bw);//GBOC的积分
-        return 10*Math.log10(SG[SG.length-1]/SG[(int)(SG.length*br/bt)]); 
+        double res= 10*Math.log10(SG[SG.length-1]/SG[(int)(SG.length*br/bt)]); 
+        return FBTools.remain(res, 3);
     }
     /**
      * 计算带外损失(BPSK)
@@ -224,7 +230,8 @@ public class FBBocCal{
         double[] bw=FBDataGen.getLineSeq(0.0001, bt/2, 10000);//默认以30MHz带宽计算(单边带)
         double[] GBPSK= getGBPSK(fc, bw);
         double[] SG=FBDataGen.getInte(GBPSK, bw);//GBOC的积分
-        return 10*Math.log10(SG[SG.length-1]/SG[(int)(SG.length*br/bt)]); 
+        double res= 10*Math.log10(SG[SG.length-1]/SG[(int)(SG.length*br/bt)]); 
+        return FBTools.remain(res, 3);
     }
     /**
      * 计算带限均方根带宽(BPSK)
@@ -237,12 +244,14 @@ public class FBBocCal{
         double[] bw=FBDataGen.getLineSeq(-br/2, br/2, 10000);//默认以30MHz带宽计算(双边带)
         double[] GBPSK= getGBPSK(fc, bw);
         double[] GS=FBDataGen.getInte(GBPSK, bw);//GBPSK的积分
+        new FBChartFrame(bw , GS);
         double lambda=GS[GS.length-1];
-        System.out.println(lambda);
+        //System.out.println(lambda);
         double[] GBPSK_Normalized=FBDataGen.multi(GBPSK,1/lambda);//归一化普密度
         double[] f=FBDataGen.getLineSeq(-br/2, br/2, 10000);//计算RMS时用到的带宽
 
-        return Math.pow(FBDataGen.getInte(FBDataGen.multi(FBDataGen.pow(f,2),GBPSK_Normalized),bw)[f.length-1],0.5); 
+        double res= Math.pow(FBDataGen.getInte(FBDataGen.multi(FBDataGen.pow(f,2),GBPSK_Normalized),bw)[f.length-1],0.5); 
+        return FBTools.remain(res, 3);
     }
 
     /**
@@ -262,7 +271,8 @@ public class FBBocCal{
 
         double[] f=FBDataGen.getLineSeq(-br/2, br/2, 10000);//计算RMS时用到的带宽
 
-        return Math.pow(FBDataGen.getInte(FBDataGen.multi(FBDataGen.pow(f,2),GBOC_Normalized),f)[f.length-1], 0.5); 
+        double res= Math.pow(FBDataGen.getInte(FBDataGen.multi(FBDataGen.pow(f,2),GBOC_Normalized),f)[f.length-1], 0.5); 
+        return FBTools.remain(res, 3);
     }
     /**
      * 计算等效矩形带宽(BPSK)
@@ -277,7 +287,8 @@ public class FBBocCal{
         double[] GS=FBDataGen.getInte(GBPSK, bw);//GBPSK的积分
         double lambda=GS[GS.length-1];
 
-        return lambda/FBTools.max(GBPSK)[0];
+        double res= lambda/FBTools.max(GBPSK)[0];
+        return FBTools.remain(res, 3);
     }
     /**
      * 计算等效矩形带宽(BOC)
@@ -293,7 +304,8 @@ public class FBBocCal{
         double[] GS=FBDataGen.getInte(GBOC, bw);//GBOC的积分
         double lambda=GS[GS.length-1];
 
-        return lambda/FBTools.max(GBOC)[0];
+        double res= lambda/FBTools.max(GBOC)[0];
+        return FBTools.remain(res, 3);
     }
     /**
      * 计算频谱隔离系数
@@ -333,7 +345,7 @@ public class FBBocCal{
         // System.out.println("GL_N="+Gl_N.length);
         // System.out.println("Gs="+Gs.length);
         double res=FBDataGen.getInte(FBDataGen.multi(Gl_N, Gs), br)[br.length-1];
-        return  10*Math.log10(res);
+        return FBTools.remain(10*Math.log10(res), 3);
     }
 
     /**
