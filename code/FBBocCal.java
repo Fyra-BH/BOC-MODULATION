@@ -227,7 +227,26 @@ public class FBBocCal{
         return 10*Math.log10(SG[SG.length-1]/SG[(int)(SG.length*br/bt)]); 
     }
     /**
-     * 计算带限均方根带宽
+     * 计算带限均方根带宽(BPSK)
+     * @param fc    BPSK码率
+     * @param bt    发射带宽(30MHz)
+     * @param br    接收带宽(24MHz)
+     * @return      带限均方根带宽(RMS)
+     */
+    public static double getRMS(double fc,double bt,double br){
+        double[] bw=FBDataGen.getLineSeq(-br/2, br/2, 10000);//默认以30MHz带宽计算(双边带)
+        double[] GBPSK= getGBPSK(fc, bw);
+        double[] GS=FBDataGen.getInte(GBPSK, bw);//GBPSK的积分
+        double lambda=GS[GS.length-1];
+        System.out.println(lambda);
+        double[] GBPSK_Normalized=FBDataGen.multi(GBPSK,1/lambda);//归一化普密度
+        double[] f=FBDataGen.getLineSeq(-br/2, br/2, 10000);//计算RMS时用到的带宽
+
+        return Math.pow(FBDataGen.getInte(FBDataGen.multi(FBDataGen.pow(f,2),GBPSK_Normalized),bw)[f.length-1],0.5); 
+    }
+
+    /**
+     * 计算带限均方根带宽(BOC)
      * @param alpha boc参数
      * @param beta  boc参数
      * @param bt    发射带宽(30MHz)
@@ -246,7 +265,22 @@ public class FBBocCal{
         return Math.pow(FBDataGen.getInte(FBDataGen.multi(FBDataGen.pow(f,2),GBOC_Normalized),f)[f.length-1], 0.5); 
     }
     /**
-     * 计算等效矩形带宽
+     * 计算等效矩形带宽(BPSK)
+     * @param fc    BPSK码率
+     * @param bt    发射带宽(30MHz)
+     * @param br    接收带宽(24MHz)
+     * @return      等效矩形带宽
+     */
+    public static double getB_RECT(double fc,double bt,double br){
+        double[] bw=FBDataGen.getLineSeq(-br/2, br/2, 10000);//默认以30MHz带宽计算(双边带)
+        double[] GBPSK= getGBPSK(fc, bw);
+        double[] GS=FBDataGen.getInte(GBPSK, bw);//GBPSK的积分
+        double lambda=GS[GS.length-1];
+
+        return lambda/FBTools.max(GBPSK)[0];
+    }
+    /**
+     * 计算等效矩形带宽(BOC)
      * @param alpha boc参数
      * @param beta  boc参数
      * @param bt    发射带宽(30MHz)
@@ -261,7 +295,6 @@ public class FBBocCal{
 
         return lambda/FBTools.max(GBOC)[0];
     }
-
     /**
      * 计算频谱隔离系数
      * @param Gl    干扰频谱
@@ -299,7 +332,8 @@ public class FBBocCal{
         Gl_N=FBTools.pic(Gl_N, (int)(10000*(1-bwr/bwt)/2)-1, (int)(10000*bwr/bwt));
         // System.out.println("GL_N="+Gl_N.length);
         // System.out.println("Gs="+Gs.length);
-        return FBDataGen.getInte(FBDataGen.multi(Gl_N, Gs), br)[br.length-1];
+        double res=FBDataGen.getInte(FBDataGen.multi(Gl_N, Gs), br)[br.length-1];
+        return  10*Math.log10(res);
     }
 
     /**

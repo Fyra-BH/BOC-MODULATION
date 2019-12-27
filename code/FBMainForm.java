@@ -43,6 +43,7 @@ import fbcode.math.FBBocCal;
 import fbcode.gui.FBChartFrame;
 import fbcode.gui.FBChartPanel;
 import fbcode.tools.FBSnapShot;
+import fbcode.tools.FBTable;
 
 public class FBMainForm extends JFrame{
 
@@ -89,7 +90,8 @@ class BocPanel extends JPanel{
 
     private int BOC_ALPHA=10;
     private int BOC_BETA=5;
-    private double BOC_BW=3.0e6;//3M带宽
+    private double BOC_BT=30e6;//30M发射带宽
+    private double BOC_BR=24e6;//24M接收带宽
     private boolean CHART_FRAME_ENABLE=false;//弹窗式图像
     private boolean CH2_ENABLE=false;//通道2
     private FBChartFrame chframe;
@@ -107,8 +109,8 @@ class BocPanel extends JPanel{
 
         JTextField tf_boc_alpha=new JTextField("10");
         JTextField tf_boc_beta=new JTextField("5");
-        JTextField tf_boc_bw_trans=new JTextField("30");
-        JTextField tf_boc_bw_recv=new JTextField("24");
+        JTextField tf_BOC_BT_trans=new JTextField("30");
+        JTextField tf_BOC_BT_recv=new JTextField("24");
 
         JButton b1=new JButton("时域图像",new ImageIcon("icon/TIME_ICON.png"));
         JButton b2=new JButton("频域图像",new ImageIcon("icon/FREQ_ICON.png"));
@@ -149,15 +151,15 @@ class BocPanel extends JPanel{
             lab_input= new JPanel();//输入面板
             lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
             lab_input.add(new JLabel("   βt=  "));
-            tf_boc_bw_trans.setMaximumSize(new Dimension(60,40));
-            lab_input.add(tf_boc_bw_trans);
+            tf_BOC_BT_trans.setMaximumSize(new Dimension(60,40));
+            lab_input.add(tf_BOC_BT_trans);
             lab_temp.add(lab_input);
 
             lab_input= new JPanel();//输入面板
             lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
             lab_input.add(new JLabel("   βr=  "));
-            tf_boc_bw_recv.setMaximumSize(new Dimension(60,40));
-            lab_input.add(tf_boc_bw_recv);
+            tf_BOC_BT_recv.setMaximumSize(new Dimension(60,40));
+            lab_input.add(tf_BOC_BT_recv);
             lab_temp.add(lab_input);
 
             lab_temp.setBorder(BorderFactory.createBevelBorder(1));
@@ -188,8 +190,8 @@ class BocPanel extends JPanel{
                     try {
                         BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
                         BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
-                        BOC_BW=Double.valueOf(tf_boc_bw_trans.getText())*1e6;
-                        if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BW>0){
+                        BOC_BT=Double.valueOf(tf_BOC_BT_trans.getText())*1e6;
+                        if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BT>0){
                             /**do nothing */
                         }else{
                             JOptionPane.showMessageDialog(null, "请输入正确参数");
@@ -227,8 +229,9 @@ class BocPanel extends JPanel{
                         try {
                                 BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
                                 BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
-                                BOC_BW=Double.valueOf(tf_boc_bw_trans.getText())*1e6;
-                                if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BW>0){
+                                BOC_BT=Double.valueOf(tf_BOC_BT_trans.getText())*1e6;
+                                BOC_BR=Double.valueOf(tf_BOC_BT_recv.getText())*1e6;
+                                if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BT>0&&BOC_BR>0){
                                     /**do nothing */
                                 }else{
                                     JOptionPane.showMessageDialog(null, "请输入正确参数");
@@ -239,7 +242,7 @@ class BocPanel extends JPanel{
                             return;
                         }
 
-                        double[] bw=FBDataGen.getLineSeq(-BOC_BW/2,BOC_BW/2,10000);//这个10000不能动！
+                        double[] bw=FBDataGen.getLineSeq(-BOC_BT/2,BOC_BT/2,10000);//这个10000不能动！
                         double[] GBOC=FBBocCal.getGBOC(BOC_ALPHA,BOC_BETA,bw);
                         
                         if(rb1.isSelected()==false){
@@ -263,8 +266,8 @@ class BocPanel extends JPanel{
                     try {
                         BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
                         BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
-                        BOC_BW=Double.valueOf(tf_boc_bw_trans.getText())*1e6;
-                        if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BW>0){
+                        BOC_BT=Double.valueOf(tf_BOC_BT_trans.getText())*1e6;
+                        if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BT>0){
                             /**do nothing */
                         }else{
                             JOptionPane.showMessageDialog(null, "请输入正确参数");
@@ -273,10 +276,8 @@ class BocPanel extends JPanel{
                     } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "请输入正确参数");
                     return;
-                    }
-                    
-
-                    double[] bw=FBDataGen.getLineSeq(-BOC_BW/2,BOC_BW/2,1000);//这个1000不能动！
+                    }                
+                    double[] bw=FBDataGen.getLineSeq(-BOC_BT/2,BOC_BT/2,1000);//这个1000不能动！
                     double[] GBOC=FBBocCal.getGBOC(BOC_ALPHA,BOC_BETA,bw);
                     double[] tau=FBDataGen.getLineSeq(-0.2e-6,0.2e-6,2000);
                     double[] Rt=FBBocCal.getRt(GBOC, bw,tau);
@@ -294,6 +295,29 @@ class BocPanel extends JPanel{
             }
         });
     
+        b4.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b4){
+                    /**首先获取BOC各项参数 */
+                    try {
+                        BOC_ALPHA=Integer.valueOf( tf_boc_alpha.getText());
+                        BOC_BETA=Integer.valueOf( tf_boc_beta.getText());
+                        BOC_BT=Double.valueOf(tf_BOC_BT_trans.getText())*1e6;
+                        if(BOC_ALPHA!=0&&BOC_BETA!=0&&BOC_BT>0){
+                            /**do nothing */
+                        }else{
+                            JOptionPane.showMessageDialog(null, "请输入正确参数");
+                            return;
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "请输入正确参数");
+                        return;
+                    }    
+                    new FBTable(BOC_BT,BOC_BR);               
+                }
+            }
+        });
+
         /**点击按键5截图*/
         b5.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent arg0){
@@ -323,6 +347,7 @@ class BocPanel extends JPanel{
                         });
                         
                     mypath.mkdir();
+                    chframe.setLocation(0,0);
                     fc.showOpenDialog(fc);//浏览文件
                     if(fc.getSelectedFile()!=null){//没选则不执行
                         try {
@@ -331,7 +356,6 @@ class BocPanel extends JPanel{
                             e.printStackTrace();
                         }
                         chframe.setAlwaysOnTop(true);
-                        chframe.setLocation(0,0);
                         new FBSnapShot(fc.getSelectedFile().toPath().toString(),"png").snapShot(chframe.getLocation().x+10,chframe.getLocation().y,chframe.getSize().width-20,chframe.getSize().height-10);
                         chframe.setAlwaysOnTop(false);
                        }
