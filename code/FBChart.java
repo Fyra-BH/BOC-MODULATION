@@ -61,6 +61,7 @@ import java.text.DecimalFormat;
     private boolean gridOn=true;//是否打开栅格
     private boolean X_SCALE_ON=true;//x轴刻度
     private boolean Y_SCALE_ON=true;//y轴刻度
+    private boolean Boarder_On=true;//轮廓
 
     private boolean downSampling=true;//降采样标志
     private double[] dataForUpsampling;//配合上面标志使用
@@ -183,6 +184,14 @@ import java.text.DecimalFormat;
       public void setYscaleOn(boolean b){
          this.Y_SCALE_ON=b;
         }
+
+    /**
+    * 是否打开轮廓
+    *@param bool  是/否
+    */
+    public void setBoarderleOn(boolean b){
+      this.Boarder_On=b;
+  }        
       /**
        * 设置线条粗细
        * @param w 粗细（正数）
@@ -206,7 +215,10 @@ import java.text.DecimalFormat;
         Rectangle2D rect=new Rectangle2D.Double(0,0,50,50);
         g.setStroke(bs);
         g.setColor(new Color(0x79,0x55,0x48));
-        g.drawRect(BLANK_REMAINED/2, BLANK_REMAINED/4, this.x_zone, this.y_zone);
+        if(Boarder_On){
+         g.drawRect(BLANK_REMAINED/2, BLANK_REMAINED/4, this.x_zone, this.y_zone);
+        }
+        
         double[] dis_temp;
         if(downSampling){//当数据足够多时
             dis_temp =FBTools.resample(y_resampled,this.x_zone,y_resampled.length);//这是用于显示的原始数据，后面将进行y轴放缩

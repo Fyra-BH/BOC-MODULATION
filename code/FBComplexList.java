@@ -399,8 +399,8 @@ public double[] angle(){
 public static FBComplexList getInte(FBComplexList y,double[] x){
     double res_re[]=new double[y.len];
     double res_im[]=new double[y.len];
-    res_im[0]=y.getIm()[0]*x[0];
-    res_re[0]=y.getRe()[0]*x[0];
+    res_im[0]=0;
+    res_re[0]=0;
     
     double[] y_im=y.getIm();
     double[] y_re=y.getRe();

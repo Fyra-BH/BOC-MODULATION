@@ -57,6 +57,7 @@ public class FBMainForm extends JFrame{
         JTabbedPane jtp =new JTabbedPane();
         jtp.addTab("BOC", new ImageIcon("icon/BOC_ICON.png"),new BocPanel(),"BOC调制");
         jtp.addTab("BPSK", new ImageIcon("icon/BPSK_ICON.png"),new BpskPanel(), "BPSK调制");
+        jtp.addTab("跟踪精度", new ImageIcon("icon/MUTI.png"),new MutiPathPanel(), "跟踪精度");
      
         getContentPane().add(jtp);
         validate();
@@ -112,6 +113,7 @@ class BocPanel extends JPanel{
         JTextField tf_boc_beta=new JTextField("5");
         JTextField tf_BOC_BT_trans=new JTextField("30");
         JTextField tf_BOC_BT_recv=new JTextField("24");
+        JTextField tf_BOC_code=new JTextField("110110010");
 
         JButton b1=new JButton("时域图像",new ImageIcon("icon/TIME_ICON.png"));
         JButton b2=new JButton("频域图像",new ImageIcon("icon/FREQ_ICON.png"));
@@ -120,6 +122,7 @@ class BocPanel extends JPanel{
         JButton b5=new JButton("保存截图",new ImageIcon("icon/SNAPSHOT.png"));
         JRadioButton rb1=new JRadioButton("弹出图像");
         JRadioButton rb2=new JRadioButton("打开通道2");
+        JRadioButton rb3=new JRadioButton("对数格式");
 
         lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
         rtpanel.setBorder(BorderFactory.createBevelBorder(1));
@@ -162,6 +165,12 @@ class BocPanel extends JPanel{
             tf_BOC_BT_recv.setMaximumSize(new Dimension(60,40));
             lab_input.add(tf_BOC_BT_recv);
             lab_temp.add(lab_input);
+            lab_input= new JPanel();//输入面板
+            lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
+            lab_input.add(new JLabel("   an=  "));
+            tf_BOC_code.setMaximumSize(new Dimension(200,40));
+            lab_input.add(tf_BOC_code);
+            lab_temp.add(lab_input);
 
             lab_temp.setBorder(BorderFactory.createBevelBorder(1));
             lab_temp.add(Box.createRigidArea(new Dimension(10,40)));
@@ -203,20 +212,25 @@ class BocPanel extends JPanel{
                         //TODO: handle exception
                     }
 
-                    double[] t=FBDataGen.getLineSeq(0,1/(BOC_ALPHA*1.023e6)*50,10000);//这个10000不能动！
-                    double[] s=FBBocCal.getBBS(BOC_ALPHA,BOC_BETA,t);
+                   // double[] s=FBBocCal.getBBS(BOC_ALPHA,BOC_BETA,t);
+                    double[] s=FBBocCal.getBBS(BOC_ALPHA,BOC_BETA,FBTools.getBinaryCode(tf_BOC_code.getText()));
+                    double[] t=FBDataGen.getLineSeq(0,1/(BOC_ALPHA*1.023e6)*50,s.length);
                     /**生成图像 */
                     if(rb1.isSelected()==false){
                         rtpanel.removeAll();
                         FBChartPanel cp= new FBChartPanel(t,s,600,400);
                         cp.setYscaleOn(false);      
-                        cp.setLineWidth(6);               
+                        cp.setLineWidth(2);               
+                        cp.setBoarderleOn(false);
                         rtpanel.add(cp);
                     }else{
                         if(chframe!=null){
                             chframe.setVisible(false);
                         }
                         chframe= new FBChartFrame(t,s,"BOC("+BOC_ALPHA+","+BOC_BETA+")");
+                        chframe.setYscaleOn(false);      
+                        chframe.setLineWidth(2);               
+                        chframe.setBoarderleOn(false);
                     }     
                 }
             }
@@ -282,6 +296,7 @@ class BocPanel extends JPanel{
                     double[] GBOC=FBBocCal.getGBOC(BOC_ALPHA,BOC_BETA,bw);
                     double[] tau=FBDataGen.getLineSeq(-0.2e-6,0.2e-6,2000);
                     double[] Rt=FBBocCal.getRt(GBOC, bw,tau);
+                    Rt=FBTools.normalize(Rt);//归一化自相关
                     if(rb1.isSelected()==false){
                         rtpanel.removeAll();   
                         FBChartPanel cp= new FBChartPanel(tau,Rt,600,400);
@@ -296,6 +311,7 @@ class BocPanel extends JPanel{
             }
         });
     
+        /**点击按键4计算参数 */
         b4.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent arg0){
                 if(arg0.getSource()==b4){
@@ -314,7 +330,7 @@ class BocPanel extends JPanel{
                         JOptionPane.showMessageDialog(null, "请输入正确参数");
                         return;
                     }    
-                    new FBTable(BOC_BT,BOC_BR);               
+                    new FBTable(30e6,24e6);               
                 }
             }
         });
@@ -386,6 +402,7 @@ class BpskPanel extends JPanel{
         JTextField tf_bpsk_rate=new JTextField("10.23");
         JTextField tf_bpsk_bw_trans=new JTextField("30");
         JTextField tf_bpsk_bw_recv=new JTextField("30");
+        JTextField tf_bpsk_code=new JTextField("110110010");
 
         this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
         add(lfpanel);
@@ -398,6 +415,8 @@ class BpskPanel extends JPanel{
         JButton b5=new JButton("保存截图",new ImageIcon("icon/SNAPSHOT.png"));
         JRadioButton rb1=new JRadioButton("弹出图像");
         JRadioButton rb2=new JRadioButton("打开通道2");
+        JRadioButton rb3=new JRadioButton("对数格式");
+        JRadioButton rb4=new JRadioButton("使用DTFT");
 
         lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
         rtpanel.setBorder(BorderFactory.createBevelBorder(1));
@@ -419,7 +438,7 @@ class BpskPanel extends JPanel{
             JPanel lab_input= new JPanel();//输入面板
             lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
             lab_input.add(new JLabel("   fc=  "));
-            tf_bpsk_rate.setMaximumSize(new Dimension(80,50));
+            tf_bpsk_rate.setMaximumSize(new Dimension(80,40));
             lab_input.add(tf_bpsk_rate);
             lab_temp.add(lab_input);
             
@@ -428,15 +447,22 @@ class BpskPanel extends JPanel{
             lab_input= new JPanel();//输入面板
             lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
             lab_input.add(new JLabel("   βt=  "));
-            tf_bpsk_bw_trans.setMaximumSize(new Dimension(80,50));
+            tf_bpsk_bw_trans.setMaximumSize(new Dimension(80,40));
             lab_input.add(tf_bpsk_bw_trans);
             lab_temp.add(lab_input);
 
             lab_input= new JPanel();//输入面板
             lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
             lab_input.add(new JLabel("   βr=  "));
-            tf_bpsk_bw_recv.setMaximumSize(new Dimension(80,50));
+            tf_bpsk_bw_recv.setMaximumSize(new Dimension(80,40));
             lab_input.add(tf_bpsk_bw_recv);
+            lab_temp.add(lab_input);
+
+            lab_input= new JPanel();//输入面板
+            lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
+            lab_input.add(new JLabel("   an=  "));
+            tf_bpsk_code.setMaximumSize(new Dimension(200,40));
+            lab_input.add(tf_bpsk_code);
             lab_temp.add(lab_input);
 
             lab_temp.setBorder(BorderFactory.createBevelBorder(1));
@@ -446,8 +472,8 @@ class BpskPanel extends JPanel{
             lab_temp.add(b2);
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
             lab_temp.add(b3);
-            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
-            lab_temp.add(b4); 
+            // lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            // lab_temp.add(b4); 
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
             lab_temp.add(b5); 
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
@@ -455,16 +481,54 @@ class BpskPanel extends JPanel{
         lfpanel.add(Box.createVerticalGlue()); 
         lfpanel.add(rb1);  
         lfpanel.add(rb2);  
+        lfpanel.add(rb3);  
+        lfpanel.add(rb4);  
 
         this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
         add(lfpanel);
         add(rtpanel);
 
         /**点击按键1绘制时域图像*/
+        /**点击按键1绘制时域图像*/
         b1.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent arg0){
                 if(arg0.getSource()==b1){
+                    /** 首先获取BOC各项参数 */
+                    try {
+                        BPSK_RC=Double.valueOf( tf_bpsk_rate.getText())*1e6;
+                        BPSK_BT=Double.valueOf(tf_bpsk_bw_trans.getText())*1e6;
+                        BPSK_BC=Double.valueOf(tf_bpsk_bw_recv.getText())*1e6;
+                        if(BPSK_BC>0&&BPSK_BT>0&&BPSK_RC>0){
+                            /**do nothing */
+                        }else{
+                            JOptionPane.showMessageDialog(null, "请输入正确参数");
+                            return;
+                        }
+                    } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "请输入正确参数");
+                    return;
+                    }  
 
+                   // double[] s=FBBocCal.getBBS(BOC_ALPHA,BOC_BETA,t);
+                    double[] s=FBBocCal.getBBS(BPSK_RC,FBTools.getBinaryCode(tf_bpsk_code.getText()));
+                    double[] t=FBDataGen.getLineSeq(0,1/BPSK_RC*50,s.length);
+                    /**生成图像 */
+                    if(rb1.isSelected()==false){
+                        rtpanel.removeAll();
+                        FBChartPanel cp= new FBChartPanel(t,s,600,400);
+                        cp.setYscaleOn(false);      
+                        cp.setLineWidth(2);               
+                        cp.setBoarderleOn(false);
+                        rtpanel.add(cp);
+                    }else{
+                        if(chframe!=null){
+                            chframe.setVisible(false);
+                        }
+                        chframe= new FBChartFrame(t,s,"BPSK("+tf_bpsk_rate.getText());
+                        chframe.setYscaleOn(false);      
+                        chframe.setLineWidth(2);               
+                        chframe.setBoarderleOn(false);
+                    }     
                 }
             }
         });
@@ -491,7 +555,9 @@ class BpskPanel extends JPanel{
 
                     double[] bw=FBDataGen.getLineSeq(-BPSK_BT/2,BPSK_BT/2,10000);//这个10000不能动！
                     double[] GBPSK=FBBocCal.getGBPSK(BPSK_RC, bw);
-                    
+                    if(rb3.isSelected()==true){//对数显示
+                        GBPSK=FBTools.getdB( GBPSK);
+                      }
                     if(rb1.isSelected()==false){
                         rtpanel.removeAll();   
                         FBChartPanel cp= new FBChartPanel(bw,GBPSK,600,400);
@@ -499,14 +565,15 @@ class BpskPanel extends JPanel{
                     }else{
                           //  chframe.setVisible(false);
                           if(rb2.isSelected()==false){
-                                chframe= new FBChartFrame(bw, FBTools.getdB(GBPSK),"归一化"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
+                                chframe= new FBChartFrame(bw, GBPSK,"归一化"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
                             }else{
                                 if(chframe!=null){
                                     chframe.setVisible(true);
-                                    chframe.setCh2(bw,FBTools.getdB(GBPSK));//打开通道2
+                                    chframe.setCh2(bw,GBPSK);//打开通道2
                                     chframe=null;
                                 }else{
-                                    chframe= new FBChartFrame(bw,FBTools.getdB(GBPSK),"归一化"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
+                                    if(rb3.isSelected()==true){}
+                                    chframe= new FBChartFrame(bw,GBPSK,"归一化"+"BPSK,中心频率="+BPSK_RC/1e6+"MHz");
                                 }
                             }                                            
                     }                    
@@ -537,8 +604,18 @@ class BpskPanel extends JPanel{
 
                     double[] bw=FBDataGen.getLineSeq(-BPSK_BT/2,BPSK_BT/2,1000);//这个1000不能动！
                     double[] GBPSK=FBBocCal.getGBPSK(BPSK_RC,bw);
-                    double[] tau=FBDataGen.getLineSeq(-0.2e-6,0.2e-6,2000);
-                    double[] Rt=FBBocCal.getRt(GBPSK, bw,tau);
+                    double[] tau=FBDataGen.getLineSeq(-1.2/1.023e6,1.2/1.023e6,2000);
+                    double[] Rt=FBBocCal.getRt(GBPSK, bw,tau);    
+                    if(rb4.isSelected()==true){
+                        //do nothing
+                    }else{//使用理论值公式
+                        tau=FBDataGen.getLineSeq(-1.2/1.023e6,1.2/1.023e6,2000);
+                        Rt=FBBocCal.getRt(BPSK_RC,tau);
+                    }
+                    Rt=FBTools.normalize(Rt);//归一化自相关
+                    if(rb3.isSelected()==true){//对数显示
+                       // Rt=FBTools.getdB(Rt);
+                      }
                     if(rb1.isSelected()==false){
                         rtpanel.removeAll();   
                         FBChartPanel cp= new FBChartPanel(tau,Rt,600,400);
@@ -558,8 +635,189 @@ class BpskPanel extends JPanel{
                     }                    
                 }
             }
-        });        
+        });       
+        /**点击按键5截图*/
+        b5.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b5){  
+                    if(chframe==null){
+                        JOptionPane.showMessageDialog(null, "请先勾选弹出窗口按钮并点击频域图像按钮");
+                    }else{
+                        chframe.setVisible(true);
+                        File mypath=new File("./snapshot");
+                        fc=new JFileChooser("./snapshot/");//用于选择保存文件
+                        fc.setFileFilter(new javax.swing.filechooser.FileFilter(){
+                        
+                            @Override
+                            public String getDescription() {
+                                // TODO Auto-generated method stub
+                                return ".png";
+                            }
+                        
+                            @Override
+                            public boolean accept(File arg0) {
+                                // TODO Auto-generated method stub
+                                if(arg0.getName().endsWith("png"))
+                                    return true;
+                                else
+                                    return false;
+                            }
+                        });
+                        
+                    mypath.mkdir();
+                    chframe.setLocation(0,0);
+                    fc.showOpenDialog(fc);//浏览文件
+                    if(fc.getSelectedFile()!=null){//没选则不执行
+                        try {
+                            Thread.sleep(500);                            
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        chframe.setAlwaysOnTop(true);
+                        new FBSnapShot(fc.getSelectedFile().toPath().toString(),"png").snapShot(chframe.getLocation().x+10,chframe.getLocation().y,chframe.getSize().width-20,chframe.getSize().height-10);
+                        chframe.setAlwaysOnTop(false);
+                       }
+                    }
+                }
+            }
+        });
+
 
     }
 }
 
+class MutiPathPanel extends JPanel{
+
+
+
+    private int BOC_ALPHA=10;
+    private int BOC_BETA=5;
+    private double BOC_BT=30e6;//30M发射带宽
+    private double BOC_BR=24e6;//24M接收带宽
+    private boolean CHART_FRAME_ENABLE=false;//弹窗式图像
+    private boolean CH2_ENABLE=false;//通道2
+    private FBChartFrame chframe;
+    private JFileChooser fc;
+
+    public FBChartFrame getChartFrame(){
+        return chframe;
+    }
+
+    public MutiPathPanel(){
+        JPanel lfpanel=new JPanel();
+        JPanel rtpanel=new JPanel();//  BackgroundPanel(new ImageIcon("icon/CHART.png").getImage());
+       // rtpanel.add(new BackgroundPanel(new ImageIcon("icon/CHART.png").getImage()));
+       
+
+        JTextField tf_tau=new JTextField("250");
+
+        JButton b1=new JButton("码跟踪误差    ",new ImageIcon("icon/FREQ_ICON.png"));
+        JButton b2=new JButton("多径偏移误差",new ImageIcon("icon/TIME_ICON.png"));
+        JButton b5=new JButton("保存截图       ",new ImageIcon("icon/SNAPSHOT.png"));
+        JRadioButton rb1=new JRadioButton("弹出图像");
+        JRadioButton rb2=new JRadioButton("打开通道2");
+        JRadioButton rb3=new JRadioButton("对数格式");
+
+        lfpanel.setBorder(BorderFactory.createBevelBorder(1));//子面板设置边界
+        rtpanel.setBorder(BorderFactory.createBevelBorder(1));
+
+        lfpanel.setLayout(new BoxLayout(lfpanel,BoxLayout.Y_AXIS));
+        /**下面加入按键与参数框 */
+        JPanel lab_temp= new JPanel();//临时面板，最终将加入lfpanel
+        lab_temp.setLayout(new BoxLayout(lab_temp, BoxLayout.Y_AXIS));
+        lab_temp.add(Box.createRigidArea(new Dimension(0,10)));
+        lab_temp.add(new JLabel("请设置参数:"));
+        lab_temp.add(new JLabel("多径时延d(ns)"));
+        lab_temp.add(new JLabel("接收带宽βr(MHz)"));
+        lab_temp.add(Box.createRigidArea(new Dimension(0,10)));
+            /**加入输入参数的面板 */        
+            JPanel lab_input= new JPanel();//输入面板
+            lab_input.setLayout(new BoxLayout(lab_input, BoxLayout.X_AXIS));
+            lab_input.add(new JLabel("     d=0~ "));
+            tf_tau.setMaximumSize(new Dimension(60,40));
+            lab_input.add(tf_tau);
+            lab_temp.add(lab_input);
+
+            lab_temp.setBorder(BorderFactory.createBevelBorder(1));
+            lab_temp.add(Box.createRigidArea(new Dimension(10,40)));
+            lab_temp.add(b1);
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            lab_temp.add(b2);
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+            lab_temp.add(b5); 
+            lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
+        lfpanel.add(lab_temp);//一次性加入左边栏
+        lfpanel.add(Box.createVerticalGlue()); 
+        lfpanel.add(rb1);  
+
+        this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
+        add(lfpanel);
+        add(rtpanel);
+
+        /**点击按键1计算码跟踪误差*/
+        b1.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b1){
+
+                    double[] bw=FBDataGen.getLineSeq(-30e6/2,30e6/2,1000);//这个1000不能动！
+                    double[] GBPSK=FBBocCal.getGBPSK(24e6,bw);
+                    double[] tau=FBDataGen.getLineSeq(-1.2/1.023e6,1.2/1.023e6,2000);
+                    double[] Rt=FBBocCal.getRt(GBPSK, bw,tau);  
+
+                    if(rb1.isSelected()==false){
+                        rtpanel.removeAll();   
+                        FBChartPanel cp= new FBChartPanel(tau,Rt,600,400);
+                        rtpanel.add(cp);
+                    }
+                }
+            }
+        });
+
+        /**点击按键5截图*/
+        b5.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b5){  
+                    if(chframe==null){
+                        JOptionPane.showMessageDialog(null, "请先勾选弹出窗口按钮并点击频域图像按钮");
+                    }else{
+                        chframe.setVisible(true);
+                        File mypath=new File("./snapshot");
+                        fc=new JFileChooser("./snapshot/");//用于选择保存文件
+                        fc.setFileFilter(new javax.swing.filechooser.FileFilter(){
+                        
+                            @Override
+                            public String getDescription() {
+                                // TODO Auto-generated method stub
+                                return ".png";
+                            }
+                        
+                            @Override
+                            public boolean accept(File arg0) {
+                                // TODO Auto-generated method stub
+                                if(arg0.getName().endsWith("png"))
+                                    return true;
+                                else
+                                    return false;
+                            }
+                        });
+                        
+                    mypath.mkdir();
+                    chframe.setLocation(0,0);
+                    fc.showOpenDialog(fc);//浏览文件
+                    if(fc.getSelectedFile()!=null){//没选则不执行
+                        try {
+                            Thread.sleep(500);                            
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        chframe.setAlwaysOnTop(true);
+                        new FBSnapShot(fc.getSelectedFile().toPath().toString(),"png").snapShot(chframe.getLocation().x+10,chframe.getLocation().y,chframe.getSize().width-20,chframe.getSize().height-10);
+                        chframe.setAlwaysOnTop(false);
+                       }
+                    }
+                }
+            }
+        });
+
+    }
+}

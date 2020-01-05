@@ -240,7 +240,7 @@ public class FBDataGen{
      */
     public static double[] getInte(double[] y,double[] x){
         double res[]=new double[y.length]; 
-        res[0]=y[0]*x[0];
+        res[0]=0;
         for (int i = 1; i < y.length; i++) {
             res[i]=res[i-1]+y[i]*(x[i]-x[i-1]);
         }

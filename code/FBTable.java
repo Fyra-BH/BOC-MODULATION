@@ -2,13 +2,23 @@ package fbcode.tools;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.nio.file.DirectoryNotEmptyException;
+
 
 import fbcode.math.*;
+import fbcode.tools.FBSnapShot;
 
 /**
  * @author     fyra
@@ -19,6 +29,7 @@ import fbcode.math.*;
 
  public class FBTable extends JFrame{
 
+    private JFileChooser fc;
     /**
      * 计算参数
      * @param bt    发射机带宽
@@ -35,19 +46,67 @@ import fbcode.math.*;
             {"带外的损失(dB)",FBBocCal.getOutOfBandLoss(1.023e6,bt,br),FBBocCal.getOutOfBandLoss(10.23e6,bt,br),FBBocCal.getOutOfBandLoss(5,2,bt,br),FBBocCal.getOutOfBandLoss(8,4,bt,br),FBBocCal.getOutOfBandLoss(10,5,bt,br)},
             {"RMS带宽(MHz)",FBBocCal.getRMS(1.023e6,bt,br)/1e6,FBBocCal.getRMS(10.23e6,bt,br)/1e6,FBBocCal.getRMS(5,2,bt,br)/1e6,FBBocCal.getRMS(8,4,bt,br)/1e6,FBBocCal.getRMS(10,5,bt,br)/1e6},
             {"等效矩形带宽(MHz),",FBBocCal.getB_RECT(1.023e6, bt, br)/1e6,FBBocCal.getB_RECT(10.23e6, bt, br)/1e6,FBBocCal.getB_RECT(5, 2, bt, br)/1e6,FBBocCal.getB_RECT(8, 4, bt, br)/1e6,FBBocCal.getB_RECT(10, 5, bt, br)/1e6},
-            {"与自身的频谱隔离系数(dB/Hz)",-61.8,-71.5,FBBocCal.getKLS(5,2,5,2,bt,br),FBBocCal.getKLS(4,8,4,8,bt,br),FBBocCal.getKLS(10,5,10,5,bt,br)},
-            {"与1023 MHzBPSK的频谱隔离系数",-61.8,-69.9,-77.2,85.2,87.1},
-            {"与 BOC(10,5)的频谱隔离系数", -87.1,80.2,-84.2,73.5,-72.5},
-            {"自相关函数主峰与第一副峰间的时延(ns)","无","无",101,64,54},
-            {"自相关函数第一副峰与主峰幅度平方之比","无","无",0.57,0.54,0.48},
+            {"与自身的频谱隔离系数(dB/Hz)",FBBocCal.getKLS(1.026e6,1.023e6,bt,br),FBBocCal.getKLS(10.26e6,10.23e6,bt,br),FBBocCal.getKLS(5,2,5,2,bt,br),FBBocCal.getKLS(4,8,4,8,bt,br),FBBocCal.getKLS(10,5,10,5,bt,br)},
+            {"与1.023 MHzBPSK的频谱隔离系数",FBBocCal.getKLS(1.026e6,1.023e6,bt,br),FBBocCal.getKLS(10.26e6,1.023e6,bt,br),FBBocCal.getKLS(1.023e6,5,2,bt,br),-FBBocCal.getKLS(1.023e6,8,4,bt,br),-FBBocCal.getKLS(1.023e6,10,5,bt,br)},
+            {"与 BOC(10,5)的频谱隔离系数", FBBocCal.getKLS(10,5,1.023e6,bt,br),-FBBocCal.getKLS(10,5,10.23e6,bt,br),FBBocCal.getKLS(5,2,10,5,bt,br),-FBBocCal.getKLS(8,4,10,5,bt,br),FBBocCal.getKLS(10,5,10,5,bt,br)},
+            {"自相关函数主峰与第一副峰间的时延(ns)","无","无",FBBocCal.getHillDelay(5, 2, bt, br),FBBocCal.getHillDelay(8, 4, bt, br),FBBocCal.getHillDelay(10, 5, bt, br)},
+            {"自相关函数第一副峰与主峰幅度平方之比","无","无",FBBocCal.getHillRate(5, 2, bt, br),FBBocCal.getHillRate(8, 4, bt, br),FBBocCal.getHillRate(10, 5, bt, br)},
         };
         JTable tb=new JTable(data,cloumNames);
-        tb.setPreferredScrollableViewportSize(new Dimension(1000,180));
+        tb.setPreferredScrollableViewportSize(new Dimension(1600,175));
         JScrollPane scrollPane=new JScrollPane(tb);
         this.add(scrollPane,BorderLayout.CENTER);
         this.add(btnSave,BorderLayout.NORTH);
         pack();
+        setResizable(false);
         this.setVisible(true);
+
+        /**点击按键5截图*/
+        btnSave.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==btnSave){  
+                    if(this==null){
+                        JOptionPane.showMessageDialog(null, "请先勾选弹出窗口按钮并点击频域图像按钮");
+                    }else{
+                        setVisible(true);
+                        File mypath=new File("./snapshot");
+                        fc=new JFileChooser("./snapshot/");//用于选择保存文件
+                        fc.setFileFilter(new javax.swing.filechooser.FileFilter(){
+                        
+                            @Override
+                            public String getDescription() {
+                                // TODO Auto-generated method stub
+                                return ".png";
+                            }
+                        
+                            @Override
+                            public boolean accept(File arg0) {
+                                // TODO Auto-generated method stub
+                                if(arg0.getName().endsWith("png"))
+                                    return true;
+                                else
+                                    return false;
+                            }
+                        });
+                        
+                    mypath.mkdir();
+                    setLocation(0,0);
+                    fc.showOpenDialog(fc);//浏览文件
+                    if(fc.getSelectedFile()!=null){//没选则不执行
+                        try {
+                            Thread.sleep(500);                            
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        setAlwaysOnTop(true);
+                        new FBSnapShot(fc.getSelectedFile().toPath().toString(),"png").snapShot(getLocation().x,getLocation().y,getSize().width,getSize().height);
+                        setAlwaysOnTop(false);
+                       }
+                    }
+                }
+            }
+        });
+
     }
 
     public static void main(String[] args) {

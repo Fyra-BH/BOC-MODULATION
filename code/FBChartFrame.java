@@ -96,7 +96,14 @@ public class FBChartFrame extends JFrame{
          public void setYscaleOn(boolean b){
          chart.setYscaleOn(b);
      }
-
+     
+    /* 是否打开轮廓
+     *@param bool  是/否
+     */
+     public void setBoarderleOn(boolean b){
+         chart.setBoarderleOn(b);
+     }
+ 
       /**
        * 设置线条粗细
        * @param w 粗细（正数）

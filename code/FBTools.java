@@ -1,5 +1,6 @@
 package fbcode.tools;
 import java.math.BigDecimal;
+import java.text.Normalizer;
 
 import fbcode.math.*;
 
@@ -219,6 +220,36 @@ import fbcode.math.*;
         double[] res=new double[len];
         for (int i = 0; i < len; i++) {
             res[i]=in[i+begin];
+        }
+        return res;
+    }
+    /**
+     * 归一化（按最大值）
+     * @param in    输入
+     * @return      归一化结果
+     */
+    public static double[] normalize(double[] in){
+        double r=FBTools.max(in)[0];
+        return FBDataGen.multi(in, 1/r);
+    }
+
+    /**
+     * 将0/1字符串变为数组
+     * @param s 字符串
+     * @return  0/1数组
+     */
+    public static int[] getBinaryCode(String s){
+        char[] ch=s.toCharArray();
+        int[] res=new int[ch.length];
+        for (int i = 0; i < ch.length; i++) {
+            if(ch[i]=='0'){
+                res[i]=-1;
+            }else if(ch[i]=='1'){
+                res[i]=1;
+            }else{
+                System.out.println("错误");
+                return null;
+            }
         }
         return res;
     }
