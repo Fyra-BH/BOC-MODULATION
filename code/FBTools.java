@@ -159,7 +159,7 @@ import fbcode.math.*;
     /**
      * 计算分贝数
      * @param x
-     * @return
+     * @return  分贝数
      */
     public static double getdB(double x){
         return 10*Math.log10(x);
@@ -168,7 +168,7 @@ import fbcode.math.*;
     /**
      * 计算分贝数
      * @param x
-     * @return
+     * @return  分贝数
      */
     public static double[] getdB(double[] x){
         double[] res=new double[x.length];
@@ -253,6 +253,19 @@ import fbcode.math.*;
         }
         return res;
     }
+    /**
+     * 分贝逆转换   
+     * @param in    分贝值
+     * @return      线性值
+     */
+    public static double[] getIdB(double[] in){
+        double[] res =new double[in.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i]=Math.pow(10, in[i]/10);
+        }
+        return res;
+    }
+    
     public static void main(String[] args) {
 
         // System.out.println(FBTools.getOrder(1.31e7));

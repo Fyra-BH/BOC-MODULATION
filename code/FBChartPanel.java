@@ -38,14 +38,14 @@ public class FBChartPanel extends JPanel{
 
      /**
       * 是否打开X刻度
-      *@param bool  是/否
+      *@param b  是/否
       */
       public void setXscaleOn(boolean b){
         chart.setXscaleOn(b);
        }
     /**
     * 是否打开Y刻度
-    *@param bool  是/否
+    *@param b  是/否
     */
     public void setYscaleOn(boolean b){
         chart.setYscaleOn(b);
@@ -53,7 +53,7 @@ public class FBChartPanel extends JPanel{
 
     /**
     * 是否打开轮廓
-    *@param bool  是/否
+    *@param b  是/否
     */
     public void setBoarderleOn(boolean b){
         chart.setBoarderleOn(b);

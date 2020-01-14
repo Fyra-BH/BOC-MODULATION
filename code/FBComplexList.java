@@ -393,8 +393,8 @@ public double[] angle(){
 /**
  * 复数积分(定积分)
  * @param y     被积函数
- * @param x     积分变量（可以事时间，也可以时频率）
- * @return
+ * @param x     积分变量（可以是时间，也可以时频率）
+ * @return      定积分
  */
 public static FBComplexList getInte(FBComplexList y,double[] x){
     double res_re[]=new double[y.len];

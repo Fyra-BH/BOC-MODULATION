@@ -89,7 +89,7 @@ public class FBBocCal{
      * @param alpha     boc参数
      * @param beta      同上
      * @param t         离散的时间(类似matlab中的用法)
-     * @return
+     * @return          随机基带信号
      */
     public static double[] getBBS(int alpha,int beta,double[] t ){
         int n=(int)alpha*2/beta;
@@ -104,11 +104,11 @@ public class FBBocCal{
         return res;
     }
     /**
-     * 获取随机基带信号
+     * 获取基带信号
      * @param alpha     boc参数
      * @param beta      同上
      * @param an        码元
-     * @return
+     * @return          基带信号
      */
     public static double[] getBBS(int alpha,int beta,int[] an){
         int n=(int)alpha*2/beta;
@@ -163,7 +163,7 @@ public class FBBocCal{
      * @param alpha     boc参数
      * @param beta      同上
      * @param N         随机码个数
-     * @return
+     * @return          随机基带信号
      */
     public static double[] getBBS(int alpha,int beta,int N ){
         double[] t=FBDataGen.getLineSeq(0, (double)(N/beta/1.023e6), 10000);
@@ -400,7 +400,7 @@ public class FBBocCal{
      * @param betas     BOC信号的参数
      * @param bwt       发射带宽(具体数值)
      * @param bwr       发射带宽(具体数值)
-     * @return
+     * @return          频谱隔离系数
      */
     public static double getKLS(int alphal,int betal,int alphas,int betas,double bwt,double bwr){
         double[] bt=FBDataGen.getLineSeq(-bwt/2, bwt/2, 10000);
@@ -424,7 +424,7 @@ public class FBBocCal{
      * @param fc        BPSK码率
      * @param bwt       发射带宽(具体数值)
      * @param bwr       发射带宽(具体数值)
-     * @return
+     * @return          谱隔离系数
      */
     public static double getKLS(int alphal,int betal,double fc,double bwt,double bwr){
         double[] bt=FBDataGen.getLineSeq(-bwt/2, bwt/2, 10000);
@@ -448,7 +448,7 @@ public class FBBocCal{
      * @param betas     BOC信号的参数
      * @param bwt       发射带宽(具体数值)
      * @param bwr       发射带宽(具体数值)
-     * @return
+     * @return          频谱隔离系数
      */
     public static double getKLS(double fc,int alphas,int betas,double bwt,double bwr){
         double[] bt=FBDataGen.getLineSeq(-bwt/2, bwt/2, 10000);
@@ -469,7 +469,7 @@ public class FBBocCal{
      * @param fcs       BPSK信号的参数（码率）
      * @param bwt       发射带宽(具体数值)
      * @param bwr       发射带宽(具体数值)
-     * @return
+     * @return          频谱隔离系数
      */
     public static double getKLS(double fcl,double fcs,double bwt,double bwr){
         double[] bt=FBDataGen.getLineSeq(-bwt/2, bwt/2, 10000);
@@ -546,45 +546,94 @@ public class FBBocCal{
 
     /**
      * 计算码跟踪误差
-     * @param delta 码间隔
+     * @param delta 码间隔(ns)
      * @param SNR   信噪比(自变量)
      * @param Gs    功率谱
      * @param T     相关积分时间(单位ms)
-     * @return
+     * @return      跟踪误差
      */
     public static double[] getNELP(double delta,double[] SNR,double[] Gs,double T){
         double BL=0.1;//码跟踪环单边噪声等效矩形带宽,默认0.1Hz
         T=T/1e3;//ms转s
+        delta=delta/1e9;//ns转s
         double[] f=FBDataGen.getLineSeq(-12e6, 12e6, Gs.length);//默认24MHz带宽
-        double tmp=1-0.25*BL*T;
+        double tmp=(1-0.25*BL*T)*BL;
         double[] tmp1=FBDataGen.getSinArray(FBDataGen.multi(f, Math.PI*delta));
         tmp1=FBDataGen.pow(tmp1, 2);
         tmp1=FBDataGen.multi(tmp1, Gs);
         tmp1=FBDataGen.getInte(tmp1, f);
         tmp=tmp1[tmp1.length-1]*tmp;//左式分子完成
+        System.out.println("z="+tmp);
 
         double[] tmp2=FBDataGen.getSinArray(FBDataGen.multi(f, Math.PI*delta));
-        tmp2=FBDataGen.multi(tmp2, f);
-        tmp2=FBDataGen.multi(tmp2, Gs);
+        tmp2=FBDataGen.multi(Gs,tmp2);
+        tmp2=FBDataGen.multi(f,tmp2);
         tmp2=FBDataGen.getInte(tmp2, f);
-        tmp2=FBDataGen.multi(tmp2, 2*Matn.PI);
+        tmp2=FBDataGen.multi(tmp2, 2*Math.PI);
         tmp2=FBDataGen.pow(tmp2, 2);
         tmp1=FBDataGen.multi(SNR,tmp2[tmp2.length-1]);
+        System.out.println("m="+tmp2[tmp2.length-1]);
 
-        tmp1=FBDataGen.div(FBDataGe, tmp1);//左侧运算完成
+        tmp1=FBDataGen.div(FBDataGen.getLineSeq(tmp, tmp, tmp1.length), tmp1);//左侧运算完成
 
         tmp2=FBDataGen.getCosArray(FBDataGen.multi(f, Math.PI*delta));
         tmp2=FBDataGen.pow(tmp2, 2);
         tmp2=FBDataGen.multi(tmp2, Gs);
-        tmp2=FBDataGen.getInte(tmp2, f);
+        tmp2=FBDataGen.getInte(tmp2, f);//右式分子完成
 
         double[] tmp3=FBDataGen.getCosArray(FBDataGen.multi(f, Math.PI*delta));
         tmp3=FBDataGen.multi(tmp3, Gs);
         tmp3=FBDataGen.getInte(tmp3, f);
         tmp3=FBDataGen.pow(tmp3, 2);
+        tmp3=FBDataGen.multi(SNR, T*tmp3[tmp3.length-1]);
 
+        tmp3=FBDataGen.div(FBDataGen.getLineSeq(tmp2[tmp2.length-1], tmp2[tmp2.length-1], tmp3.length), tmp3);
+        tmp3=FBDataGen.add(tmp3,1);//右式计算完成
+
+
+        return FBDataGen.multi(tmp1,tmp3);
 
     }
+
+    /**
+     * 计算多径偏移误差
+     * @param Gs        功率谱
+     * @param delta     相关时间
+     * @param tau       自变量
+     * @param b         正负号标记
+     * @return          多径偏移误差
+     */
+    public static double[] getNELP(double[] Gs,double delta,double[]tau,boolean b){
+        double[] res=new double[tau.length];
+        double[] t=new double[tau.length];
+        double[] e=new double[tau.length];
+        double alpha=Math.pow(0.1,0.3);
+        if(b==true){
+            alpha=-alpha;
+        }
+        double[] f=FBDataGen.getLineSeq(-12e6,12e6,Gs.length);
+        for (int i = 0; i < res.length; i++) {
+            double[] tmp=FBDataGen.getSinArray(FBDataGen.multi(f,2*Math.PI*tau[i]));
+            tmp=FBDataGen.multi(tmp,FBDataGen.getSinArray(FBDataGen.multi(f,Math.PI*delta)));
+            tmp=FBDataGen.multi(tmp,Gs);
+            tmp=FBDataGen.multi(FBDataGen.getInte(tmp,f),alpha);
+
+            double[] tmp1=FBDataGen.multi(FBDataGen.getCosArray(FBDataGen.multi(f,2*Math.PI*tau[i])),alpha);
+            tmp1=FBDataGen.add(tmp1,1);
+            tmp1=FBDataGen.multi(tmp1,FBDataGen.getSinArray(FBDataGen.multi(f,Math.PI*delta)));
+            tmp1=FBDataGen.multi(tmp1,Gs);
+            tmp1=FBDataGen.multi(tmp1,f);
+            tmp1=FBDataGen.multi(FBDataGen.getInte(tmp1,f),2*Math.PI);
+
+            res[i]=tmp[tmp.length-1]/tmp1[tmp1.length-1];
+            t[i]=tmp[tmp.length-1];
+            e[i]=tmp1[tmp1.length-1];
+        }
+
+        res=FBDataGen.multi(res, 3e8);
+        return res;
+    }
+
     public static void main(String[] args) {
         // System.out.println("BOC(10,5)的等效矩形带宽="+getB_RECT(10, 5, 30e6, 24e6)/1e6);
         // System.out.println("BOC(8,4)的等效矩形带宽="+getB_RECT(8, 4, 30e6, 24e6)/1e6);

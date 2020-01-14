@@ -748,7 +748,7 @@ class MutiPathPanel extends JPanel{
             lab_temp.add(Box.createRigidArea(new Dimension(10,10)));
         lfpanel.add(lab_temp);//一次性加入左边栏
         lfpanel.add(Box.createVerticalGlue()); 
-        lfpanel.add(rb1);  
+       // lfpanel.add(rb1);  
 
         this.setLayout(new BoxLayout(this,BoxLayout.X_AXIS));
         add(lfpanel);
@@ -759,20 +759,53 @@ class MutiPathPanel extends JPanel{
             public void actionPerformed(ActionEvent arg0){
                 if(arg0.getSource()==b1){
 
-                    double[] bw=FBDataGen.getLineSeq(-30e6/2,30e6/2,1000);//这个1000不能动！
-                    double[] GBPSK=FBBocCal.getGBPSK(24e6,bw);
-                    double[] tau=FBDataGen.getLineSeq(-1.2/1.023e6,1.2/1.023e6,2000);
-                    double[] Rt=FBBocCal.getRt(GBPSK, bw,tau);  
+                    double[] bw=FBDataGen.getLineSeq(-12e6/2,12e6/2,1000);//这个1000不能动！
+                    double[] SNR=FBDataGen.getLineSeq(20,40,10000);
+                    double[] NELP=FBBocCal.getNELP(80, SNR, FBBocCal.getGBOC(5, 2, bw), 20);
+                    double[] NELP1=FBBocCal.getNELP(40, SNR, FBBocCal.getGBOC(10, 5, bw), 20);
 
-                    if(rb1.isSelected()==false){
+                    if(rb1.isSelected()==true){
                         rtpanel.removeAll();   
-                        FBChartPanel cp= new FBChartPanel(tau,Rt,600,400);
+                        FBChartPanel cp= new FBChartPanel(SNR,NELP,600,400);
                         rtpanel.add(cp);
+                    }else{
+                        FBChartFrame chframe=new FBChartFrame(SNR, NELP);
+                        chframe.setCh2(SNR, NELP1);
                     }
                 }
             }
         });
 
+        /**点击按键2计算多径偏移误差*/
+        b2.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0){
+                if(arg0.getSource()==b2){
+
+                    double[] tau=FBDataGen.getLineSeq(0, 250e-9, 1000);
+                    double[] bw=FBDataGen.getLineSeq(-12e6,12e6, 200);
+                    double[] GBOC=FBBocCal.getGBOC(10, 5, bw);
+                    double[] NELP=FBBocCal.getNELP(GBOC,40e-9,tau,true);
+                    double[] NELP1=FBBocCal.getNELP(GBOC,40e-9,tau,false);
+
+                    if(rb1.isSelected()==true){
+                        rtpanel.removeAll();   
+                        FBChartPanel cp= new FBChartPanel(tau,NELP,600,400);
+                        rtpanel.add(cp);
+                    }else{
+                        NELP[0]+=3;
+                        FBChartFrame chframe=new FBChartFrame(tau, NELP,"BOC(10,5)");
+                        chframe.setCh2(tau,NELP1);
+
+                        double[] GBPSK=FBBocCal.getGBPSK(10.23e6, bw);
+                        NELP=FBBocCal.getNELP(GBPSK,0.5/10.23e6,tau,true);
+                        NELP1=FBBocCal.getNELP(GBPSK,0.5/10.23e6,tau,false);
+                        NELP[0]+=5;
+                        chframe=new FBChartFrame(tau, NELP,"BPSK(10.23)");
+                        chframe.setCh2(tau,NELP1);
+                    }
+                }
+            }
+        });
         /**点击按键5截图*/
         b5.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent arg0){

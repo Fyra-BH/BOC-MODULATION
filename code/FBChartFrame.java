@@ -1,9 +1,6 @@
 package fbcode.gui;
 
 
-/**
- * Chart类的延伸，将加入事件监测
- */
 
 import fbcode.math.FBComplexList;
 import fbcode.math.FBDataGen;
@@ -18,6 +15,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
 
+/**
+ * Chart类的延伸，将加入事件监测,实现自适应尺寸
+ */
 
 public class FBChartFrame extends JFrame{
     private FBChart chart;
@@ -51,10 +51,10 @@ public class FBChartFrame extends JFrame{
    }
    /**
    * 设置通道2是否打开
-   * @param b
+   * @param b  是/否
    */
-  public void setCh2Close(){
-   chart.setCh2Close();
+  public void setCh2Close(boolean b){
+   chart.setCh2Close(b);
 }
           /**
       * 设置显示区域
@@ -66,14 +66,14 @@ public class FBChartFrame extends JFrame{
       }
            /**
       * 返回矩形框的长
-      * @return 
+      * @return 矩形框的长
       */
      public int getXzone(){
         return chart.getXzone();
      }
      /**
       * 返回矩形框的高
-      * @return
+      * @return   矩形框的高
       */
      public int getYzone(){
         return chart.getYzone();
@@ -84,21 +84,21 @@ public class FBChartFrame extends JFrame{
      }
      /**
       * 是否打开X刻度
-      *@param bool  是/否
+      *@param b  是/否
       */
       public void setXscaleOn(boolean b){
          chart.setXscaleOn(b);
         }
      /**
      * 是否打开Y刻度
-     *@param bool  是/否
+     *@param b  是/否
      */
          public void setYscaleOn(boolean b){
          chart.setYscaleOn(b);
      }
      
     /* 是否打开轮廓
-     *@param bool  是/否
+     *@param b  是/否
      */
      public void setBoarderleOn(boolean b){
          chart.setBoarderleOn(b);

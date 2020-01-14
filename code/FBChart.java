@@ -1,11 +1,4 @@
-/**
- * @author:Fyra
- * @version:1.0
- * 
- * 用于绘制图表的类
- */
-
- package fbcode.gui;
+package fbcode.gui;
 
 import fbcode.math.FBComplexList;
 import fbcode.math.FBDataGen;
@@ -26,6 +19,12 @@ import java.awt.geom.Point2D;
 import java.text.DecimalFormat;
 
 
+/**
+ * @author:Fyra
+ * @version:1.0
+ * 
+ * 用于绘制图表的类
+ */
 
  public class FBChart extends Canvas{
 
@@ -119,10 +118,10 @@ import java.text.DecimalFormat;
      }
    /**
    * 设置通道2是否打开
-   * @param b
+   * @param b  是/否
    */
-   public void setCh2Close(){
-      this.CH2_ON=false;
+   public void setCh2Close(boolean b){
+      this.CH2_ON=b;
    }
    
      /**
@@ -149,14 +148,14 @@ import java.text.DecimalFormat;
      }   
      /**
       * 返回矩形框的长
-      * @return 
+      * @return   矩形框的长
       */
      public int getXzone(){
         return x_zone;
      }
      /**
       * 返回矩形框的高
-      * @return
+      * @return   矩形框的高
       */
      public int getYzone(){
         return y_zone;
@@ -164,22 +163,22 @@ import java.text.DecimalFormat;
 
      /**
       * 是否打开栅格
-      * @param bool  是/否
+      * @param b  是/否
       */
-     public void setGridOn(boolean bool){
-      this.gridOn=bool;
+     public void setGridOn(boolean b){
+      this.gridOn=b;
      }
      
      /**
       * 是否打开X刻度
-      *@param bool  是/否
+      *@param b  是/否
       */
      public void setXscaleOn(boolean b){
       this.X_SCALE_ON=b;
      }
      /**
       * 是否打开Y刻度
-      *@param bool  是/否
+      *@param b  是/否
       */
       public void setYscaleOn(boolean b){
          this.Y_SCALE_ON=b;
@@ -187,7 +186,7 @@ import java.text.DecimalFormat;
 
     /**
     * 是否打开轮廓
-    *@param bool  是/否
+    *@param b  是/否
     */
     public void setBoarderleOn(boolean b){
       this.Boarder_On=b;

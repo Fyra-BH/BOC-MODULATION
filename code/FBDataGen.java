@@ -139,10 +139,10 @@ public class FBDataGen{
     }
 
     /**
-     * 
+     * 乘法
      * @param x
      * @param y
-     * @return
+     * @return  乘积
      */
     public static double[] multi(double[] x,double y){
         double[] res=new double[x.length];
@@ -152,10 +152,10 @@ public class FBDataGen{
         return res;
     }
     /**
-     * 
+     * 乘法
      * @param x
      * @param y
-     * @return
+     * @return 乘积
      */
     public static double[] multi(double[] x,double[] y){
         double[] res=new double[x.length];
@@ -168,7 +168,7 @@ public class FBDataGen{
      * 使用1.7e308代替无穷
      * @param x
      * @param y
-     * @return
+     * @return  商
      */
     public static double[] div(double[] x,double[] y){
         double[] res=new double[x.length];
@@ -181,10 +181,10 @@ public class FBDataGen{
         return res;
     }
     /**
-     * 
+     * 除法
      * @param x
      * @param y
-     * @return
+     * @return  商
      */
     public static double[] div(double[] x,double y){
         double[] res=new double[x.length];
@@ -194,10 +194,10 @@ public class FBDataGen{
         return res;
     }
     /**
-     * 
+     * 加法
      * @param x
      * @param y
-     * @return
+     * @return  和
      */
     public static double[] add(double[] x,double y){
         double[] res=new double[x.length];
@@ -207,10 +207,10 @@ public class FBDataGen{
         return res;
     }
     /**
-     * 
+     * 加法
      * @param x
      * @param y
-     * @return
+     * @return  和
      */
     public static double[] add(double[] x,double[] y){
         double[] res=new double[x.length];
@@ -223,7 +223,7 @@ public class FBDataGen{
      * 乘方
      * @param x 底数
      * @param y 指数
-     * @return
+     * @return      乘方结果
      */
     public static double[] pow(double[] x,double y){
         double[] res=new double[x.length];
@@ -236,7 +236,7 @@ public class FBDataGen{
      * 定积分
      * @param y
      * @param x
-     * @return
+     * @return  定积分
      */
     public static double[] getInte(double[] y,double[] x){
         double res[]=new double[y.length]; 
@@ -262,9 +262,11 @@ public class FBDataGen{
         return res;
     }
 
-
-
-
+    /**
+     * 求模
+     * @param in
+     * @return  模
+     */
     public static double[] getMode(double[] in){
         double[] res=new double[in.length];
         for (int i = 0; i < in.length; i++) {
@@ -276,7 +278,7 @@ public class FBDataGen{
      * 获取一定长度的随机0/1码
      * @param len   长度
      * @param P     1的概率
-     * @return
+     * @return      随机0/1码
      */
     public static int[] getRandomCode(int len,double P){
         int[] res=new int[len];
